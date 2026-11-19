@@ -10,8 +10,9 @@
 body{margin:0;font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px}
 header{position:sticky;top:0;background:var(--bg);padding:14px 16px 8px;border-bottom:1px solid var(--line);z-index:5}
 .topo{max-width:1100px;margin:0 auto}
-h1{margin:0 0 8px;font-size:22px}
-input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+.topo-linha{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+h1{margin:0;font-size:22px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
 #busca{width:100%;padding:10px 12px;border-radius:10px}
 .linha{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
 .rot{font-size:12px;color:var(--mute);min-width:72px}
@@ -25,7 +26,8 @@ main{padding:16px;max-width:1100px;margin:0 auto}
 .card b{display:block;margin-bottom:4px}
 .meta{font-size:13px;color:var(--mute)}
 .tag{display:inline-block;font-size:12px;background:var(--acc2);border-radius:6px;padding:1px 6px;margin:4px 4px 0 0}
-.voltar{background:none;border:0;color:var(--acc);font-size:15px;cursor:pointer;padding:0;margin-bottom:10px}
+.voltar{background:none;border:0;color:var(--acc);font-size:15px;cursor:pointer;padding:0}
+.cab-det{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 h2{margin:0 0 4px}
 h3.sec{margin:22px 0 10px}
 .barra{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:14px 0;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14px}
@@ -34,38 +36,54 @@ h3.sec{margin:22px 0 10px}
 .grupo h4{margin:0 0 8px;font-size:13px;color:var(--acc);text-transform:uppercase;letter-spacing:.05em}
 .grupo ul,.grupo ol{margin:0;padding-left:18px}
 .grupo li{margin:5px 0}
-.q{font-weight:600}
+.q,.qp{font-weight:600}
 .obs{color:var(--mute);font-size:13px}
+.notas{white-space:pre-line}
 .insta{margin:20px 0;max-width:420px}
 .insta iframe{width:100%;height:600px;border:1px solid var(--line);border-radius:12px;background:#fff}
 a{color:var(--acc)}
 .aviso{font-size:12px;color:var(--mute);margin-top:16px}
 .vazio{color:var(--mute);padding:30px 0;text-align:center}
-.topo-linha{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.topo-linha h1{margin:0}
 .btn{border:1px solid var(--acc);background:var(--acc);color:var(--on);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
 .btn.sec{background:transparent;color:var(--acc)}
 .btn:disabled{opacity:.6;cursor:default}
 .mini{border:0;background:none;color:var(--mute);font-size:18px;cursor:pointer;padding:0 4px}
-.cab-det{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.cab-det .voltar{margin:0}
+/* formulário */
 .form label.c{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
 .form .campo{width:100%}
-.form textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%;min-height:60px}
+.form textarea{width:100%;min-height:60px}
 .duas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 14px}
+.importar{background:var(--card);border:1px dashed var(--acc);border-radius:12px;padding:10px 12px;margin:10px 0}
+.importar summary{cursor:pointer;color:var(--acc);font-weight:600}
+.importar textarea{min-height:160px;margin:10px 0}
 .fgrupo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
 .fgrupo .gnome{flex:1;font-weight:600}
 .fing{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;padding-bottom:6px;border-bottom:1px dashed var(--line)}
-.fing .fq{width:70px}
-.fing .fu{width:160px}
-.fing .fi{flex:1 1 170px}
+.fing .fq{width:80px}
+.fing .fu{width:170px}
+.fing .fi{flex:1 1 200px}
 .fing .fo{flex:1 1 120px}
 .fing label{font-size:13px;color:var(--mute);white-space:nowrap}
+.fing.agosto .fq{border-style:dashed}
 .fpasso{display:flex;gap:6px;align-items:flex-start;margin:6px 0}
 .fpasso textarea{min-height:44px}
 .acoes{display:flex;gap:10px;margin:20px 0;align-items:center;flex-wrap:wrap}
 .erro{color:#d0452f;font-size:14px}
 .sugs{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+/* combobox: select em que dá pra digitar */
+.combo{position:relative}
+.cb-caixa{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:2px 6px}
+.combo:focus-within .cb-caixa{border-color:var(--acc)}
+.cb-in{flex:1 1 60px;min-width:50px;border:0!important;background:transparent!important;padding:4px 2px!important;outline:none}
+.cb-chips{display:contents}
+.cb-chip{display:inline-flex;align-items:center;background:var(--acc2);border-radius:6px;padding:2px 2px 2px 8px;font-size:13px}
+.cb-chip b{cursor:pointer;font-weight:400;color:var(--mute);padding:0 6px}
+.cb-x,.cb-seta{border:0;background:none;color:var(--mute);cursor:pointer;font-size:14px;padding:0 3px}
+.combo:not(.tem) .cb-x{visibility:hidden}
+.cb-lista{position:absolute;left:0;top:100%;margin-top:2px;min-width:100%;width:max-content;max-width:320px;max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.cb-op{padding:6px 10px;cursor:pointer;font-size:14px}
+.cb-op.on,.cb-op:hover{background:var(--acc2)}
+.cb-vazio{padding:6px 10px;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
@@ -78,8 +96,8 @@ a{color:var(--acc)}
 
 <script>
 var D = null;
-var ML = {}, NOMES = {};
-var estado = { busca: '', tags: [], cat: '', aberta: null, modo: 'original', fator: 1 };
+var ML = {}, NOMES = {}, ABREV = {};
+var estado = { busca: '', tags: [], cat: '', aberta: null, modo: 'original', fator: 1, form: null };
 var FR = [[0, ''], [1/8, '⅛'], [1/4, '¼'], [1/3, '⅓'], [1/2, '½'], [2/3, '⅔'], [3/4, '¾'], [1, '']];
 
 function app() { return document.getElementById('app'); }
@@ -90,16 +108,22 @@ function esc(s) {
 }
 function norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
 
-google.script.run
-  .withSuccessHandler(function (d) { carregar(d); filtros(); render(); })
-  .withFailureHandler(function (e) {
-    app().innerHTML = '<div class="vazio">Erro ao carregar: ' + esc(e && e.message) + '</div>';
-  })
-  .getData();
+if (window.google && google.script) {
+  google.script.run
+    .withSuccessHandler(function (d) { carregar(d); filtros(); render(); })
+    .withFailureHandler(function (e) {
+      app().innerHTML = '<div class="vazio">Erro ao carregar: ' + esc(e && e.message) + '</div>';
+    })
+    .getData();
+}
 
 function carregar(d) {
-  D = d; ML = {}; NOMES = {};
-  d.unidades.forEach(function (u) { NOMES[u.codigo] = u.nome; if (u.ml) ML[u.codigo] = u.ml; });
+  D = d; ML = {}; NOMES = {}; ABREV = {};
+  d.unidades.forEach(function (u) {
+    NOMES[u.codigo] = u.nome;
+    if (u.ml) ML[u.codigo] = u.ml;
+    if (u.abrev) ABREV[u.codigo] = u.abrev;
+  });
 }
 
 /* ---------- quantidades e conversão ---------- */
@@ -125,11 +149,20 @@ function fmt(q) {
   if (fr) return ((fr.i ? fr.i : '') + fr.f) || '0';
   return String(Math.round(q * 10) / 10).replace('.', ',');
 }
+/** Quantidade para editar no formulário: 0.5 -> "1/2", 2.5 -> "2 1/2". */
+function qtdTexto(v) {
+  var q = qtdNum(v);
+  if (q == null) return v == null ? '' : String(v);
+  var fr = fracao(q);
+  var asc = { '⅛': '1/8', '¼': '1/4', '⅓': '1/3', '½': '1/2', '⅔': '2/3', '¾': '3/4' };
+  if (fr && fr.f) return (fr.i ? fr.i + ' ' : '') + asc[fr.f];
+  return String(Math.round(q * 1000) / 1000).replace('.', ',');
+}
 function bonito(q) { return !!fracao(q) || q >= 10; }
 function nomeU(u, q) {
   var n = NOMES[u] || u || '';
   if (u === 'un') return '';
-  if (q <= 1 || /^(ml|g|kg|a gosto)$/.test(n)) return n;
+  if (q <= 1 || /^(ml|g|kg)$/.test(n)) return n;
   if (/^colher/.test(n)) return n.replace(/^colher/, 'colheres');
   return n.replace(/^(\S+)/, '$1s');
 }
@@ -204,7 +237,7 @@ document.getElementById('busca').addEventListener('input', function (e) {
 function render() {
   if (!D || estado.form) return;
   if (estado.aberta) {
-    var r = D.receitas.filter(function (x) { return x.id === estado.aberta; })[0];
+    var r = receita(estado.aberta);
     if (r) return detalhe(r);
     estado.aberta = null;
   }
@@ -263,14 +296,57 @@ function item(it) {
     qt = fmt(c.q) + (n ? ' ' + esc(n) : '');
   }
   var ing = esc(it.ingrediente);
-  if (it.aGosto) {
+  if (it.aGosto || it.unidade === 'a_gosto') {
     return '<li>' + ing + ' <span class="q">a gosto</span>' +
-      (qt ? ' <span class="obs">(sugestão: ' + qt + ')</span>' : '') + obsHtml(it) + '</li>';
+      (q != null ? ' <span class="obs">(sugestão: ' + qt + ')</span>' : '') + obsHtml(it) + '</li>';
   }
-  if (it.unidade === 'a_gosto' && q == null) return '<li>' + ing + ' <span class="q">a gosto</span>' + obsHtml(it) + '</li>';
   return '<li><span class="q">' + qt + '</span> ' + ing + obsHtml(it) + '</li>';
 }
 function obsHtml(it) { return it.obs ? ' <span class="obs">(' + esc(it.obs) + ')</span>' : ''; }
+
+/* {ingrediente} no modo de preparo vira a quantidade resumida: (400 g), (s. ½ cc) */
+function ingredientesDe(r) {
+  var l = [];
+  r.grupos.forEach(function (g) { g.itens.forEach(function (it) { l.push(it); }); });
+  return l;
+}
+function acharIng(lista, chave) {
+  var k = norm(chave);
+  if (!k) return null;
+  function por(f) { return lista.filter(function (it) { return f(norm(it.ingrediente)); })[0]; }
+  return por(function (n) { return n === k; }) ||
+    por(function (n) { return (' ' + n + ' ').indexOf(' ' + k + ' ') > -1; }) ||
+    por(function (n) { return n.indexOf(k) > -1; }) ||
+    por(function (n) { return n && k.indexOf(n) > -1; });
+}
+function abrevU(u, q) {
+  if (u === 'un') return 'unid.';
+  if (ABREV[u] && ABREV[u] !== NOMES[u]) return ABREV[u];
+  return nomeU(u, q);
+}
+function qtdCurta(it) {
+  var q = qtdNum(it.qtd), t = '';
+  if (q != null) {
+    var c = converter(q * estado.fator, it.unidade), a = abrevU(c.u, c.q);
+    t = fmt(c.q) + (a ? ' ' + a : '');
+  } else if (it.qtd) {
+    t = String(it.qtd);
+  }
+  if (it.aGosto) return t ? 's. ' + t : 'a gosto';
+  return t;
+}
+function passoHtml(texto, ings) {
+  var out = '', ultimo = 0, re = /\{([^{}]+)\}/g, m;
+  while ((m = re.exec(texto))) {
+    out += esc(texto.slice(ultimo, m.index));
+    var partes = m[1].split(','), chave = partes.shift().trim(), extra = partes.join(',').trim();
+    var it = acharIng(ings, chave), q = it ? qtdCurta(it) : chave;
+    var dentro = [q, extra].filter(Boolean).join(', ');
+    if (dentro) out += '<span class="qp">(' + esc(dentro) + ')</span>';
+    ultimo = re.lastIndex;
+  }
+  return out + esc(texto.slice(ultimo));
+}
 
 function opt(v, rot, sel) { return '<option value="' + esc(v) + '"' + (sel ? ' selected' : '') + '>' + esc(rot) + '</option>'; }
 
@@ -294,12 +370,13 @@ function detalhe(r) {
     }).join('') + '</div>';
   }
   if (r.passos.length) {
+    var ings = ingredientesDe(r);
     h += '<h3 class="sec">Modo de preparo</h3><div class="grupos">' + r.passos.map(function (g) {
       return '<div class="grupo">' + (g.nome ? '<h4>' + esc(g.nome) + '</h4>' : '') + '<ol>' +
-        g.itens.map(function (p) { return '<li>' + esc(p.passo) + '</li>'; }).join('') + '</ol></div>';
+        g.itens.map(function (p) { return '<li>' + passoHtml(p.passo, ings) + '</li>'; }).join('') + '</ol></div>';
     }).join('') + '</div>';
   }
-  if (r.obs) h += '<p class="obs">' + esc(r.obs) + '</p>';
+  if (r.obs) h += '<p class="obs notas">' + esc(r.obs) + '</p>';
 
   var e = insta(r.insta);
   if (e) {
@@ -314,7 +391,7 @@ function detalhe(r) {
   document.getElementById('fator').onchange = function () { estado.fator = +this.value; render(); };
 }
 
-/* ---------- conversor avulso ---------- */
+/* ---------- conversor avulso (na lista) ---------- */
 function convBox() {
   var ks = Object.keys(ML);
   if (!ks.length) return '';
@@ -337,6 +414,141 @@ function bindConv() {
   calc();
 }
 
+/* ---------- combobox: select em que dá pra digitar ----------
+   cfg: { opcoes: [{v, t}], multi, valor (texto ou lista), criar (aceita valor novo), dica } */
+function Combo(host, cfg) {
+  var self = this;
+  this.cfg = cfg; this.multi = !!cfg.multi; this.vals = []; this.ativo = -1; this.itens = [];
+  host.classList.add('combo');
+  host.innerHTML = '<div class="cb-caixa"><span class="cb-chips"></span><input class="cb-in" autocomplete="off">' +
+    '<button type="button" class="cb-x" tabindex="-1" title="Limpar">×</button><span class="cb-seta">▾</span></div>' +
+    '<div class="cb-lista" hidden></div>';
+  this.host = host;
+  this.inp = host.querySelector('.cb-in');
+  this.lista = host.querySelector('.cb-lista');
+  this.chips = host.querySelector('.cb-chips');
+  this.inp.placeholder = cfg.dica || '';
+  host._combo = this;
+  this.set(cfg.valor);
+  this.inp.addEventListener('focus', function () { self.abrir(); });
+  this.inp.addEventListener('input', function () { self.ativo = 0; self.abrir(); self.pintar(); });
+  this.inp.addEventListener('keydown', function (e) { self.tecla(e); });
+  this.inp.addEventListener('blur', function () { setTimeout(function () { if (document.activeElement !== self.inp) self.fechar(true); }, 120); });
+  host.querySelector('.cb-x').addEventListener('mousedown', function (e) { e.preventDefault(); self.set(self.multi ? [] : ''); self.inp.focus(); });
+  host.querySelector('.cb-seta').addEventListener('mousedown', function (e) {
+    e.preventDefault();
+    if (document.activeElement === self.inp && !self.lista.hidden) self.lista.hidden = true; else { self.inp.focus(); self.abrir(); }
+  });
+  this.lista.addEventListener('mousedown', function (e) {
+    e.preventDefault();
+    var li = e.target.closest('[data-i]');
+    if (li) self.escolher(self.itens[+li.dataset.i]);
+  });
+  this.chips.addEventListener('mousedown', function (e) {
+    var x = e.target.closest('[data-rm]');
+    if (x) { e.preventDefault(); self.vals.splice(+x.dataset.rm, 1); self.pintar(); }
+  });
+}
+Combo.prototype.rotulo = function (v) {
+  var o = this.cfg.opcoes.filter(function (o) { return o.v === v; })[0];
+  return o ? o.t : v;
+};
+Combo.prototype.set = function (v) {
+  if (this.multi) { this.vals = (v || []).slice(); this.inp.value = ''; }
+  else { this.vals = v ? [v] : []; this.inp.value = v ? this.rotulo(v) : ''; }
+  this.pintar();
+};
+Combo.prototype.get = function () {
+  if (this.multi) return this.vals.slice();
+  var t = this.inp.value.trim();
+  if (!t) return '';
+  if (this.vals[0] && this.rotulo(this.vals[0]) === t) return this.vals[0];
+  var o = this.cfg.opcoes.filter(function (o) { return norm(o.t) === norm(t) || norm(o.v) === norm(t); })[0];
+  return o ? o.v : (this.cfg.criar ? t : '');
+};
+Combo.prototype.pintar = function () {
+  var self = this;
+  if (this.multi) {
+    this.chips.innerHTML = this.vals.map(function (v, i) {
+      return '<span class="cb-chip">' + esc(self.rotulo(v)) + '<b data-rm="' + i + '" title="Tirar">×</b></span>';
+    }).join('');
+  }
+  this.host.classList.toggle('tem', this.multi ? this.vals.length > 0 : !!this.inp.value);
+};
+Combo.prototype.abrir = function () {
+  var self = this, cru = this.inp.value.trim(), t = norm(cru);
+  var ja = this.multi ? this.vals.map(norm) : [];
+  // com um valor já escolhido, ao focar mostra todas as opções
+  if (!this.multi && this.vals[0] && cru === this.rotulo(this.vals[0])) t = '';
+  var ops = this.cfg.opcoes.filter(function (o) { return ja.indexOf(norm(o.v)) < 0 && (!t || norm(o.t).indexOf(t) > -1); });
+  ops.sort(function (a, b) {
+    var pa = norm(a.t) === t ? 0 : norm(a.t).indexOf(t) === 0 ? 1 : 2;
+    var pb = norm(b.t) === t ? 0 : norm(b.t).indexOf(t) === 0 ? 1 : 2;
+    return pa - pb;
+  });
+  this.itens = ops.slice(0, 60);
+  var existe = this.cfg.opcoes.some(function (o) { return norm(o.t) === t; }) || ja.indexOf(t) > -1;
+  if (this.cfg.criar && t && !existe) {
+    var novo = { v: cru, t: cru, novo: true };
+    var comeca = this.itens.some(function (o) { return norm(o.t).indexOf(t) === 0; });
+    if (comeca) this.itens.push(novo); else this.itens.unshift(novo);
+  }
+  if (this.ativo >= this.itens.length) this.ativo = this.itens.length - 1;
+  this.lista.innerHTML = this.itens.map(function (o, i) {
+    return '<div class="cb-op' + (i === self.ativo ? ' on' : '') + '" data-i="' + i + '">' +
+      (o.novo ? '+ Criar “' + esc(o.t) + '”' : esc(o.t)) + '</div>';
+  }).join('') || '<div class="cb-vazio">Nada encontrado</div>';
+  this.lista.hidden = false;
+  var on = this.lista.querySelector('.on');
+  if (on) on.scrollIntoView({ block: 'nearest' });
+};
+Combo.prototype.fechar = function (saindo) {
+  this.lista.hidden = true; this.ativo = -1;
+  if (!saindo) return;
+  var cru = this.inp.value.trim();
+  if (this.multi) {
+    if (cru && this.cfg.criar) this.escolher({ v: cru, t: cru }, true);
+  } else {
+    var v = this.get();
+    this.vals = v ? [v] : [];
+    this.inp.value = v ? this.rotulo(v) : '';
+    this.pintar();
+  }
+};
+Combo.prototype.escolher = function (o, semAbrir) {
+  if (!o) return;
+  if (this.multi) {
+    if (this.vals.map(norm).indexOf(norm(o.v)) < 0) this.vals.push(o.v);
+    this.inp.value = ''; this.pintar();
+    if (!semAbrir) { this.ativo = -1; this.abrir(); }
+  } else {
+    this.vals = [o.v]; this.inp.value = o.t; this.pintar();
+    this.lista.hidden = true;
+  }
+};
+Combo.prototype.tecla = function (e) {
+  var n = this.itens.length, cru = this.inp.value.trim();
+  if (e.key === 'ArrowDown') { e.preventDefault(); this.ativo = Math.min(n - 1, this.ativo + 1); this.abrir(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); this.ativo = Math.max(0, this.ativo - 1); this.abrir(); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (!this.lista.hidden && this.itens[this.ativo]) this.escolher(this.itens[this.ativo]);
+    else if (this.multi && cru && this.cfg.criar) this.escolher({ v: cru, t: cru });
+    else this.lista.hidden = true;
+  }
+  else if (e.key === 'Escape') { this.lista.hidden = true; }
+  else if (e.key === 'Tab' && !this.lista.hidden && this.ativo >= 0 && this.itens[this.ativo] && cru) {
+    this.escolher(this.itens[this.ativo], true);
+  }
+  else if (e.key === 'Backspace' && this.multi && !cru && this.vals.length) { this.vals.pop(); this.pintar(); this.abrir(); }
+  else if (e.key === ',' && this.multi) { e.preventDefault(); if (cru) this.escolher({ v: cru, t: cru }); }
+};
+function opcoes(lista) { return lista.map(function (x) { return { v: x, t: x }; }); }
+function opcoesUnidade() {
+  return D.unidades.filter(function (u) { return u.codigo !== 'a_gosto'; })
+    .map(function (u) { return { v: u.codigo, t: u.nome }; });
+}
+
 /* ---------- cadastro e edição ---------- */
 function receita(id) { return D.receitas.filter(function (x) { return x.id === id; })[0]; }
 function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
@@ -344,39 +556,42 @@ function el(html) { var d = document.createElement('div'); d.innerHTML = html.tr
 function campo(rot, id, v, extra) {
   return '<div><label class="c">' + rot + '</label><input class="campo" id="' + id + '" value="' + esc(v || '') + '" ' + (extra || '') + '></div>';
 }
-function lista(id, valores) {
-  return '<datalist id="' + id + '">' + valores.map(function (v) { return '<option value="' + esc(v) + '">'; }).join('') + '</datalist>';
-}
+function combo(id) { return document.getElementById(id)._combo; }
 
 function abrirForm(r) {
-  estado.form = { original: r ? r.id : '', idManual: !!r };
+  estado.form = { original: r ? r.id : '', idManual: !!r, ultimoPasso: null };
   filtros();
   window.scrollTo(0, 0);
   var cats = {};
   D.receitas.forEach(function (x) { if (x.categoria) cats[x.categoria] = 1; });
   app().innerHTML = '<div class="form"><h2>' + (r ? 'Editar receita' : 'Nova receita') + '</h2>' +
+    '<details class="importar"' + (r ? '' : ' open') + '><summary>📋 Colar receita em texto</summary>' +
+    '<textarea id="f-texto" placeholder="Cole aqui a receita inteira (título, ingredientes e modo de preparo)…"></textarea>' +
+    '<button type="button" class="btn sec" data-acao="importar">Preencher o formulário</button> <span id="f-imsg" class="obs"></span></details>' +
     '<label class="c">Nome *</label><input class="campo" id="f-nome" value="' + esc(r ? r.nome : '') + '">' +
     '<label class="c">Identificador (sem espaço; gerado a partir do nome)</label><input class="campo" id="f-id" value="' + esc(r ? r.id : '') + '">' +
     '<div class="duas">' +
-      campo('Categoria', 'f-cat', r && r.categoria, 'list="l-cat"') +
+      '<div><label class="c">Categoria</label><div id="f-cat"></div></div>' +
       campo('Rendimento', 'f-rend', r && r.rendimento) +
       campo('Tempo (min)', 'f-tempo', r && r.tempo, 'inputmode="numeric"') +
       campo('Link do Instagram', 'f-insta', r && r.insta) +
       campo('Link da foto', 'f-foto', r && r.foto) +
     '</div>' +
-    '<label class="c">Tags (separadas por vírgula)</label><input class="campo" id="f-tags" value="' + esc(r ? r.tags.join(', ') : '') + '">' +
-    '<div class="sugs">' + D.tags.map(function (t) {
-      return '<button type="button" class="chip" data-acao="tag" data-v="' + esc(t.tag) + '">+ ' + esc(t.tag) + '</button>';
-    }).join('') + '</div>' +
+    '<label class="c">Tags</label><div id="f-tags"></div>' +
     '<h3 class="sec">Ingredientes</h3><div id="f-grupos"></div>' +
     '<button type="button" class="btn sec" data-acao="add-grupo">+ Grupo de ingredientes</button>' +
-    '<h3 class="sec">Modo de preparo</h3><div id="f-passos"></div>' +
+    '<h3 class="sec">Modo de preparo</h3>' +
+    '<p class="obs">Para mostrar a quantidade de um ingrediente no passo, escreva o nome dele entre chaves, ex.: <b>{sal}</b> → (s. ½ cc). ' +
+    'Clicando num passo, os ingredientes aparecem aqui para inserir:</p><div class="sugs" id="f-ingchips"></div>' +
+    '<div id="f-passos"></div>' +
     '<button type="button" class="btn sec" data-acao="add-pgrupo">+ Grupo de passos</button>' +
     '<label class="c">Observações</label><textarea id="f-obs">' + esc(r ? r.obs : '') + '</textarea>' +
     '<div class="acoes"><button type="button" class="btn" data-acao="salvar">Salvar</button>' +
     '<button type="button" class="btn sec" data-acao="cancelar">Cancelar</button><span id="f-msg" class="erro"></span></div>' +
-    lista('l-cat', Object.keys(cats).sort()) + lista('l-ing', D.ingredientes || []) +
     '</div>';
+
+  new Combo(document.getElementById('f-cat'), { opcoes: opcoes(Object.keys(cats).sort()), valor: r ? r.categoria : '', criar: true, dica: 'Escolha ou digite' });
+  new Combo(document.getElementById('f-tags'), { opcoes: opcoes(D.tags.map(function (t) { return t.tag; })), valor: r ? r.tags : [], multi: true, criar: true, dica: 'Escolha ou digite' });
 
   (r && r.grupos.length ? r.grupos : [{ nome: '', itens: [] }]).forEach(addGrupo);
   (r && r.passos.length ? r.passos : [{ nome: '', itens: [] }]).forEach(addPGrupo);
@@ -384,7 +599,7 @@ function abrirForm(r) {
   var nome = document.getElementById('f-nome'), id = document.getElementById('f-id');
   nome.oninput = function () { if (!estado.form.idManual) id.value = slug(nome.value); };
   id.oninput = function () { estado.form.idManual = true; };
-  nome.focus();
+  if (r) nome.focus(); else document.getElementById('f-texto').focus();
 }
 
 function caixaGrupo(dica, botao, acao) {
@@ -399,18 +614,24 @@ function addGrupo(g) {
   (g.itens.length ? g.itens : [{}, {}, {}]).forEach(function (it) { addIng(box, it); });
 }
 function addIng(box, it) {
-  var uops = '<option value="">unidade</option>' + D.unidades.map(function (u) { return opt(u.codigo, u.nome, false); }).join('');
-  var row = el('<div class="fing"><input class="fq" placeholder="qtd" inputmode="decimal">' +
-    '<select class="fu">' + uops + '</select>' +
-    '<input class="fi" placeholder="ingrediente" list="l-ing"><input class="fo" placeholder="obs">' +
-    '<label title="Marque para a quantidade virar só uma sugestão"><input type="checkbox" class="fg"> a gosto</label>' +
+  var row = el('<div class="fing"><input class="fq" placeholder="qtd" inputmode="decimal"><div class="fu"></div><div class="fi"></div>' +
+    '<input class="fo" placeholder="obs">' +
+    '<label title="Marque se for a gosto. A quantidade vira só uma sugestão."><input type="checkbox" class="fg"> a gosto</label>' +
     '<button type="button" class="mini" data-acao="del" title="Remover">×</button></div>');
-  row.querySelector('.fq').value = it.qtd == null ? '' : String(it.qtd).replace('.', ',');
-  row.querySelector('.fu').value = it.unidade || '';
-  row.querySelector('.fi').value = it.ingrediente || '';
+  var fq = row.querySelector('.fq'), fg = row.querySelector('.fg');
+  fq.value = qtdTexto(it.qtd);
   row.querySelector('.fo').value = it.obs || '';
-  row.querySelector('.fg').checked = !!it.aGosto;
   box.querySelector('.itens').appendChild(row);
+  new Combo(row.querySelector('.fu'), { opcoes: opcoesUnidade(), valor: it.unidade === 'a_gosto' ? '' : (it.unidade || ''), criar: true, dica: 'unidade' });
+  new Combo(row.querySelector('.fi'), { opcoes: opcoes(D.ingredientes || []), valor: it.ingrediente || '', criar: true, dica: 'ingrediente' });
+  function marcar() {
+    fq.placeholder = fg.checked ? 'sugestão' : 'qtd';
+    fq.title = fg.checked ? 'Quantidade sugerida (opcional)' : '';
+    row.classList.toggle('agosto', fg.checked);
+  }
+  fg.checked = !!it.aGosto || it.unidade === 'a_gosto';
+  fg.onchange = marcar;
+  marcar();
   return row;
 }
 function addPGrupo(g) {
@@ -426,6 +647,22 @@ function addPasso(box, p) {
   box.querySelector('.itens').appendChild(row);
   return row;
 }
+function nomesNoForm() {
+  return [].map.call(document.querySelectorAll('#f-grupos .fi'), function (h) { return h._combo.get(); }).filter(Boolean);
+}
+function chipsIng() {
+  var alvo = document.getElementById('f-ingchips');
+  if (!alvo) return;
+  alvo.innerHTML = nomesNoForm().map(function (n) {
+    return '<button type="button" class="chip" data-acao="ins" data-v="' + esc(n) + '">{' + esc(n) + '}</button>';
+  }).join('');
+}
+document.addEventListener('focusin', function (e) {
+  if (estado.form && e.target.matches && e.target.matches('#f-passos textarea')) {
+    estado.form.ultimoPasso = e.target;
+    chipsIng();
+  }
+});
 
 document.addEventListener('click', function (e) {
   var b = e.target.closest('[data-acao]');
@@ -437,15 +674,40 @@ document.addEventListener('click', function (e) {
   else if (a === 'add-passo') addPasso(box, {}).querySelector('textarea').focus();
   else if (a === 'del') b.parentNode.remove();
   else if (a === 'del-grupo') box.remove();
-  else if (a === 'tag') {
-    var t = document.getElementById('f-tags');
-    var ts = t.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
-    if (ts.map(norm).indexOf(norm(b.dataset.v)) < 0) ts.push(b.dataset.v);
-    t.value = ts.join(', ');
-  }
+  else if (a === 'ins') inserirNoPasso('{' + b.dataset.v + '}');
+  else if (a === 'importar') importar();
   else if (a === 'cancelar') { estado.form = null; filtros(); render(); }
   else if (a === 'salvar') salvar(b);
 });
+
+function inserirNoPasso(txt) {
+  var ta = estado.form.ultimoPasso;
+  if (!ta || !document.body.contains(ta)) return;
+  var i = ta.selectionStart, f = ta.selectionEnd, antes = ta.value.slice(0, i);
+  if (antes && !/\s$/.test(antes)) txt = ' ' + txt;
+  ta.value = antes + txt + ta.value.slice(f);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = i + txt.length;
+}
+
+function importar() {
+  var txt = document.getElementById('f-texto').value, msg = document.getElementById('f-imsg');
+  if (!txt.trim()) { msg.textContent = 'Cole o texto da receita primeiro.'; return; }
+  var p = parseReceita(txt, D.unidades);
+  if (p.nome) {
+    document.getElementById('f-nome').value = p.nome;
+    if (!estado.form.idManual) document.getElementById('f-id').value = slug(p.nome);
+  }
+  if (p.rendimento) document.getElementById('f-rend').value = p.rendimento;
+  if (p.obs) document.getElementById('f-obs').value = p.obs;
+  if (p.grupos.length) { document.getElementById('f-grupos').innerHTML = ''; p.grupos.forEach(addGrupo); }
+  if (p.passos.length) { document.getElementById('f-passos').innerHTML = ''; p.passos.forEach(addPGrupo); }
+  chipsIng();
+  var n = 0; p.grupos.forEach(function (g) { n += g.itens.length; });
+  var np = 0; p.passos.forEach(function (g) { np += g.itens.length; });
+  msg.textContent = 'Pronto: ' + n + ' ingredientes e ' + np + ' passos. Confira antes de salvar.';
+  document.querySelector('.importar').open = false;
+}
 
 function coletar() {
   function grupos(sel, mapear) {
@@ -456,13 +718,13 @@ function coletar() {
   function v(id) { return document.getElementById(id).value.trim(); }
   return {
     idOriginal: estado.form.original,
-    nome: v('f-nome'), id: slug(v('f-id') || v('f-nome')), categoria: v('f-cat'), rendimento: v('f-rend'),
+    nome: v('f-nome'), id: slug(v('f-id') || v('f-nome')), categoria: combo('f-cat').get(), rendimento: v('f-rend'),
     tempo: v('f-tempo'), insta: v('f-insta'), foto: v('f-foto'), obs: v('f-obs'),
-    tags: v('f-tags').split(',').map(function (t) { return t.trim(); }).filter(Boolean),
+    tags: combo('f-tags').get(),
     grupos: grupos('#f-grupos', function (row) {
       return {
-        qtd: row.querySelector('.fq').value.trim(), unidade: row.querySelector('.fu').value,
-        ingrediente: row.querySelector('.fi').value.trim(), obs: row.querySelector('.fo').value.trim(),
+        qtd: row.querySelector('.fq').value.trim(), unidade: row.querySelector('.fu')._combo.get(),
+        ingrediente: row.querySelector('.fi')._combo.get(), obs: row.querySelector('.fo').value.trim(),
         aGosto: row.querySelector('.fg').checked,
       };
     }),
@@ -485,6 +747,153 @@ function salvar(btn) {
       msg.textContent = (e && e.message) || 'Erro ao salvar.';
     })
     .salvarReceita(r);
+}
+
+/* ---------- ler receita colada em texto ---------- */
+var FRAC_UNI = { '½': '1/2', '⅓': '1/3', '⅔': '2/3', '¼': '1/4', '¾': '3/4', '⅛': '1/8' };
+var ALIAS_EXTRA = {
+  colher_sopa: ['cs', 'c. sopa', 'c.s.', 'colher sopa', 'colheres sopa', 'colher (sopa)', 'colheres (sopa)'],
+  colher_cha: ['cc', 'c. cha', 'c.c.', 'colher cha', 'colheres cha', 'colher (cha)', 'colheres (cha)', 'cch'],
+  colher_sobremesa: ['csb', 'colher sobremesa', 'colheres sobremesa'],
+  colher_cafe: ['colher cafe', 'colheres cafe'],
+  xicara: ['xic', 'xic.', 'xicaras'],
+  g: ['gr', 'grama', 'gramas'],
+  kg: ['quilo', 'quilos', 'kilo', 'kilos'],
+  ml: ['mililitro', 'mililitros'],
+  l: ['lt', 'litros'],
+  un: ['unid', 'unid.', 'unidade', 'unidades', 'un.'],
+  pitada: ['pitadas']
+};
+// palavras que, em "5 fatias de bacon", são unidade (vira unidade nova se não existir)
+var MEDIDAS_CASEIRAS = ['fatia', 'dente', 'lata', 'pote', 'pacote', 'ramo', 'folha', 'maco', 'punhado', 'posta',
+  'tablete', 'envelope', 'caixa', 'copo', 'gota', 'fio', 'pedaco', 'rodela', 'cubo', 'tira', 'vidro', 'sache', 'cabeca', 'talo', 'bandeja'];
+
+function trocaFrac(s) { return String(s).replace(/[½⅓⅔¼¾⅛]/g, function (c) { return ' ' + FRAC_UNI[c]; }).replace(/(\d)\s+(\d\/)/, '$1 $2').trim(); }
+function tiraEmoji(s) {
+  return String(s).replace(/^[^\p{L}\p{N}(]+/u, '').replace(/[^\p{L}\p{N}).!?:]+$/u, '').trim();
+}
+function singular(w) {
+  w = w.toLowerCase();
+  if (/oes$/.test(norm(w))) return w.slice(0, -3) + 'ão';
+  if (/(r|z|s)es$/.test(w)) return w.slice(0, -2);
+  if (/s$/.test(w) && w.length > 3) return w.slice(0, -1);
+  return w;
+}
+function minusc(t) { return t.length > 1 && t[1] === t[1].toLowerCase() ? t[0].toLowerCase() + t.slice(1) : t; }
+function aliases(unidades) {
+  var l = [];
+  unidades.forEach(function (u) {
+    var nomes = [u.nome, u.abrev, u.codigo.replace(/_/g, ' ')];
+    if (/^colher/.test(u.nome)) nomes.push(u.nome.replace(/^colher/, 'colheres'));
+    else if (u.nome.length > 2) nomes.push(u.nome + 's');
+    nomes = nomes.concat(ALIAS_EXTRA[u.codigo] || []);
+    nomes.forEach(function (n) { if (n) l.push({ a: norm(n), cod: u.codigo }); });
+  });
+  return l.sort(function (a, b) { return b.a.length - a.a.length; });
+}
+/** "1/2 cc" -> {qtd:'1/2', unidade:'colher_cha', resto:''}; "400 g de robalo" -> resto "robalo". */
+function parseQtdUn(s, als, ingrediente) {
+  s = trocaFrac(s);
+  var m = s.match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*/);
+  if (!m) return null;
+  var q = m[1].replace(/\s+/g, ' '), resto = s.slice(m[0].length), n = norm(resto), un = '';
+  for (var i = 0; i < als.length; i++) {
+    var a = als[i].a;
+    if (n.indexOf(a) === 0 && (n.length === a.length || /[\s.,;:)]/.test(n.charAt(a.length)) || /\.$/.test(a))) {
+      un = als[i].cod; resto = resto.slice(a.length); break;
+    }
+  }
+  resto = resto.trim();
+  if (!un) {
+    var w = resto.match(/^(\S+)(?:\s+de\s+(.+)|$)/i);
+    var cand = w ? singular(w[1]) : '';
+    if (cand && MEDIDAS_CASEIRAS.indexOf(norm(cand)) > -1 && (w[2] || !ingrediente)) { un = cand; resto = w[2] || ''; }
+    else if (!ingrediente && w && !w[2]) { un = cand; resto = ''; }
+    else un = 'un';
+  }
+  resto = resto.replace(/^de\s+/i, '').trim();
+  return { qtd: q, unidade: un, resto: resto };
+}
+function parseIngrediente(linha, als) {
+  var t = trocaFrac(linha), it = { qtd: '', unidade: '', ingrediente: '', obs: '', aGosto: false };
+  t = t.replace(/\(\s*s(?:ug(?:est[aã]o)?)?\.?:?\s*([^()]*)\)/i, function (m, q) {
+    var p = parseQtdUn(q, als, false);
+    if (p) { it.qtd = p.qtd; it.unidade = p.unidade; return ' '; }
+    return m;
+  });
+  var obs = [];
+  t = t.replace(/\(([^()]*)\)/g, function (m, o) { obs.push(o.trim()); return ' '; });
+  it.obs = obs.join('; ');
+  if (/(^|\s)a gosto(\s|$|[,.;])/i.test(t)) { it.aGosto = true; t = t.replace(/(^|\s)a gosto/i, ' '); }
+  t = t.replace(/\s+/g, ' ').trim().replace(/[,;.:]$/, '').trim();
+  if (!it.aGosto) {
+    var p = parseQtdUn(t, als, true);
+    if (p) { it.qtd = p.qtd; it.unidade = p.unidade; t = p.resto; }
+  }
+  it.ingrediente = minusc(t.replace(/^de\s+/i, '').trim());
+  return it;
+}
+function mesmaQtd(it, p) {
+  var a = qtdNum(it.qtd), b = qtdNum(p.qtd);
+  return a != null && b != null && Math.abs(a - b) < 1e-6 && norm(it.unidade) === norm(p.unidade);
+}
+/** "(400 g)" no passo vira "{filé de robalo}" quando bate com a quantidade de um ingrediente. */
+function marcarQtds(texto, ings, als) {
+  return texto.replace(/\(\s*(s\.\s*)?([^()]+?)\s*\)/gi, function (m, s, dentro, pos) {
+    var partes = dentro.split(','), q = partes.shift(), extra = partes.join(',').trim();
+    var p = parseQtdUn(q, als, false);
+    if (!p || p.resto) return m;
+    var cands = ings.filter(function (it) { return mesmaQtd(it, p); });
+    if (!cands.length) return m;
+    var antes = norm(texto.slice(Math.max(0, pos - 50), pos));
+    var it = cands.filter(function (c) {
+      return norm(c.ingrediente).split(/[\s\-\/]+/).some(function (w) { return w.length > 2 && antes.indexOf(w) > -1; });
+    })[0] || cands[0];
+    return '{' + it.ingrediente + (extra ? ', ' + extra : '') + '}';
+  });
+}
+function parseReceita(texto, unidades) {
+  var als = aliases(unidades);
+  var r = { nome: '', rendimento: '', obs: '', grupos: [], passos: [] };
+  var sec = 'topo', g = null, p = null, passo = null, notas = [], nota = false;
+  texto.replace(/\r/g, '').split('\n').forEach(function (bruta) {
+    var l = bruta.trim();
+    if (!l || /^[⸻—–_\-=~*·•.\s]+$/.test(l)) return;
+    var marcador = /^([•\-*·▪◦●–]|\d+[.)](?=\s))/.test(l);
+    var limpa = tiraEmoji(l.replace(/^([•\-*·▪◦●–]|\d+[.)](?=\s))\s*/, ''));
+    var n = norm(limpa);
+    if (!limpa) return;
+    if (!marcador && /^ingredientes?\b/.test(n)) {
+      sec = 'ing'; g = null;
+      var rm = limpa.match(/\(([^)]*)\)/);
+      if (rm) r.rendimento = rm[1].trim();
+      return;
+    }
+    if (!marcador && /^(modo de preparo|preparo|modo de fazer|como fazer)\b/.test(n)) { sec = 'prep'; p = null; passo = null; nota = false; return; }
+    if (sec === 'topo') {
+      if (!r.nome) {
+        var tm = limpa.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+        if (tm && tm[1]) { r.nome = tm[1]; notas.push(tm[2]); } else r.nome = limpa;
+      } else notas.push(limpa);
+      return;
+    }
+    if (sec === 'ing') {
+      if (!marcador && /:$/.test(limpa)) { g = { nome: limpa.replace(/:$/, '').trim(), itens: [] }; r.grupos.push(g); return; }
+      if (!g) { g = { nome: '', itens: [] }; r.grupos.push(g); }
+      g.itens.push(parseIngrediente(limpa, als));
+      return;
+    }
+    if (/^👉/.test(l) || nota) { nota = true; notas.push(limpa); return; }
+    if (!marcador && /:$/.test(limpa) && limpa.length < 40) { p = { nome: limpa.replace(/:$/, '').trim(), itens: [] }; r.passos.push(p); passo = null; return; }
+    if (!p) { p = { nome: '', itens: [] }; r.passos.push(p); }
+    if (marcador || !passo) { passo = { passo: limpa }; p.itens.push(passo); }
+    else passo.passo += ' ' + limpa;
+  });
+  r.obs = notas.join('\n');
+  var ings = [];
+  r.grupos.forEach(function (gr) { gr.itens.forEach(function (it) { ings.push(it); }); });
+  r.passos.forEach(function (gr) { gr.itens.forEach(function (ps) { ps.passo = marcarQtds(ps.passo, ings, als); }); });
+  return r;
 }
 </script>
 </body>

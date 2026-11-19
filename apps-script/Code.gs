@@ -15,24 +15,24 @@ const ABAS = {
   receitas: { nome: 'Receitas', cab: ['id', 'nome', 'categoria', 'rendimento', 'tempo_min', 'link_insta', 'foto_url', 'tags', 'obs'] },
   itens: { nome: 'Ingredientes_Receita', cab: ['receita_id', 'grupo', 'ordem', 'qtd', 'unidade', 'ingrediente', 'obs', 'a_gosto'] },
   preparo: { nome: 'Preparo', cab: ['receita_id', 'grupo', 'ordem', 'passo'] },
-  unidades: { nome: 'Unidades', cab: ['codigo', 'nome', 'ml'] },
+  unidades: { nome: 'Unidades', cab: ['codigo', 'nome', 'ml', 'abrev'] },
   tags: { nome: 'Tags', cab: ['de', 'para', 'tipo'] },
   catalogo: { nome: 'Ingredients', cab: ['Name', 'Keto', 'Carnivore', 'Obs'] },
 };
 
+// codigo, nome, ml (para converter volume), abreviação (usada no modo de preparo)
 const UNIDADES_PADRAO = [
-  ['xicara', 'xícara', 240],
-  ['colher_sopa', 'colher de sopa', 15],
-  ['colher_sobremesa', 'colher de sobremesa', 10],
-  ['colher_cha', 'colher de chá', 5],
-  ['colher_cafe', 'colher de café', 2.5],
-  ['ml', 'ml', 1],
-  ['l', 'litro', 1000],
-  ['un', 'unidade', ''],
-  ['g', 'g', ''],
-  ['kg', 'kg', ''],
-  ['pitada', 'pitada', ''],
-  ['a_gosto', 'a gosto', ''],
+  ['xicara', 'xícara', 240, 'xíc.'],
+  ['colher_sopa', 'colher de sopa', 15, 'cs'],
+  ['colher_sobremesa', 'colher de sobremesa', 10, 'csb'],
+  ['colher_cha', 'colher de chá', 5, 'cc'],
+  ['colher_cafe', 'colher de café', 2.5, 'ccafé'],
+  ['ml', 'ml', 1, 'ml'],
+  ['l', 'litro', 1000, 'l'],
+  ['un', 'unidade', '', 'unid.'],
+  ['g', 'g', '', 'g'],
+  ['kg', 'kg', '', 'kg'],
+  ['pitada', 'pitada', '', 'pitada'],
 ];
 
 function ss_() {
@@ -55,7 +55,8 @@ function setup() {
   });
 
   const un = ss.getSheetByName(ABAS.unidades.nome);
-  if (un.getLastRow() < 2) un.getRange(2, 1, UNIDADES_PADRAO.length, 3).setValues(UNIDADES_PADRAO);
+  if (un.getLastRow() < 2) un.getRange(2, 1, UNIDADES_PADRAO.length, 4).setValues(UNIDADES_PADRAO);
+  else migrarUnidades_(un);
 
   if (ss.getSheetByName(ABAS.receitas.nome).getLastRow() < 2 &&
       ss.getSheetByName(ABAS.itens.nome).getLastRow() < 2) {
@@ -63,6 +64,22 @@ function setup() {
   }
 
   validacoes_(ss);
+}
+
+/** Preenche abreviações que faltam e tira "a gosto" das unidades (agora é a caixinha). */
+function migrarUnidades_(sh) {
+  const cab = cabecalho_(sh);
+  const cCod = cab.indexOf('codigo'), cAb = cab.indexOf('abrev');
+  const n = ultimaLinha_(sh);
+  if (n < 2) return;
+  const v = sh.getRange(2, 1, n - 1, cab.length).getValues();
+  const padrao = {};
+  UNIDADES_PADRAO.forEach(function (u) { padrao[u[0]] = u[3]; });
+  for (let i = v.length - 1; i >= 0; i--) {
+    const cod = txt_(v[i][cCod]);
+    if (cod === 'a_gosto') { sh.deleteRow(i + 2); continue; }
+    if (!txt_(v[i][cAb]) && padrao[cod]) sh.getRange(i + 2, cAb + 1).setValue(padrao[cod]);
+  }
 }
 
 function garantirCabecalho_(sh, cab) {
@@ -224,7 +241,7 @@ function getData() {
 
   const unidades = ler_(ss, ABAS.unidades.nome)
     .filter(function (u) { return txt_(u.codigo); })
-    .map(function (u) { return { codigo: txt_(u.codigo), nome: txt_(u.nome), ml: Number(u.ml) || 0 }; });
+    .map(function (u) { return { codigo: txt_(u.codigo), nome: txt_(u.nome), ml: Number(u.ml) || 0, abrev: txt_(u.abrev) }; });
 
   // Sugestões para o campo "ingrediente" do formulário: catálogo + já usados.
   const nomesIng = {};
@@ -251,11 +268,20 @@ function slug_(s) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-/** "0,5" vira número; frações tipo "1/2" ficam como texto (a tela entende as duas). */
+/**
+ * "0,5", "1/2" e "1 1/2" viram número (a tela mostra como ½, 1½...).
+ * Precisa: se gravar o texto "1/2", a planilha transforma em data (1º de fevereiro).
+ * Qualquer outro texto vai com apóstrofo para ficar como texto mesmo.
+ */
 function qtd_(v) {
   const s = txt_(v);
+  if (!s) return '';
   if (/^\d+([.,]\d+)?$/.test(s)) return Number(s.replace(',', '.'));
-  return s;
+  let m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (m) return Number(m[1]) + Number(m[2]) / Number(m[3]);
+  m = s.match(/^(\d+)\/(\d+)$/);
+  if (m) return Number(m[1]) / Number(m[2]);
+  return "'" + s;
 }
 
 function cabecalho_(sh) {
@@ -336,13 +362,29 @@ function salvarReceita(r) {
       tags: tags.join(', '), obs: txt_(r.obs),
     }]);
 
+    // Unidade digitada que não existe (ex.: "fatia") vira unidade nova na aba Unidades.
+    const unidades = ler_(ss, ABAS.unidades.nome);
+    const resolverUnidade = function (valor) {
+      const v = txt_(valor);
+      if (!v) return '';
+      const k = v.toLowerCase();
+      const achada = unidades.filter(function (u) {
+        return [u.codigo, u.nome, u.abrev].some(function (x) { return txt_(x).toLowerCase() === k; });
+      })[0];
+      if (achada) return txt_(achada.codigo);
+      const nova = { codigo: slug_(v).replace(/-/g, '_'), nome: v, ml: '', abrev: v };
+      unidades.push(nova);
+      anexar_(ss.getSheetByName(ABAS.unidades.nome), [nova]);
+      return nova.codigo;
+    };
+
     const itens = [];
     (r.grupos || []).forEach(function (g) {
       let ordem = 0;
       (g.itens || []).forEach(function (it) {
         if (!txt_(it.ingrediente)) return;
         itens.push({
-          receita_id: id, grupo: txt_(g.nome), ordem: ++ordem, qtd: qtd_(it.qtd), unidade: txt_(it.unidade),
+          receita_id: id, grupo: txt_(g.nome), ordem: ++ordem, qtd: qtd_(it.qtd), unidade: resolverUnidade(it.unidade),
           ingrediente: txt_(it.ingrediente), obs: txt_(it.obs), a_gosto: !!it.aGosto,
         });
       });
