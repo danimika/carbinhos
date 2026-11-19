@@ -471,6 +471,24 @@ function resolverUnidade_(ss, unidades, valor) {
   return nova.codigo;
 }
 
+/** Apaga a receita das abas Receitas, Ingredientes_Receita e Preparo. */
+function apagarReceita(id) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    id = txt_(id);
+    if (!id) throw new Error('Receita sem identificador.');
+    const ss = ss_();
+    apagarLinhas_(ss.getSheetByName(ABAS.receitas.nome), 'id', id);
+    apagarLinhas_(ss.getSheetByName(ABAS.itens.nome), 'receita_id', id);
+    apagarLinhas_(ss.getSheetByName(ABAS.preparo.nome), 'receita_id', id);
+    SpreadsheetApp.flush();
+    return getData();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 /** Liga/desliga a estrela de favorita. */
 function marcarFavorita(id, valor) {
   const lock = LockService.getScriptLock();

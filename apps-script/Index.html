@@ -3,113 +3,206 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,560;0,9..144,600;0,9..144,650;1,9..144,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fbf7f2;--card:#fff;--ink:#2b2420;--mute:#8a7f76;--line:#eadfd3;--acc:#c0622f;--acc2:#f3e3d6;--on:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#1d1916;--card:#26211d;--ink:#f1e9e1;--mute:#a69a8f;--line:#3a322c;--acc:#e08a55;--acc2:#3a2b21;--on:#1d1916}}
+/* Visual no mesmo estilo do Verticais: claro, Fraunces + Outfit, cards com faixa lateral. */
+:root{color-scheme:light;--bg:#faf6f5;--raise:#fff;--card:#fff;--ink:#3d2c32;--muted:#8c6e74;--faint:#b79aa0;--ph:#cdb9bd;
+  --line:rgba(61,44,50,.12);--accent:#c65d7b;--gold:#ab7a5a;--ok:#7e9b6e;--danger:#c97b72;--shadow:0 20px 48px rgba(61,44,50,.12);
+  --serif:"Fraunces","Iowan Old Style",Palatino,serif;--sans:"Outfit","Avenir Next","Segoe UI",sans-serif}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px}
-header{position:sticky;top:0;background:var(--bg);padding:14px 16px 8px;border-bottom:1px solid var(--line);z-index:5}
-.topo{max-width:1100px;margin:0 auto}
-.topo-linha{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-h1{margin:0;font-size:22px}
-input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
-#busca{width:100%;padding:10px 12px;border-radius:10px}
-.linha{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
-.rot{font-size:12px;color:var(--mute);min-width:72px}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer}
-.chip.on{background:var(--acc);border-color:var(--acc);color:var(--on)}
-main{padding:16px;max-width:1100px;margin:0 auto}
-.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer}
-.card .img{aspect-ratio:4/3;background:var(--acc2) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:40px}
-.card .txt{padding:10px 12px}
-.card b{display:block;margin-bottom:4px}
-.meta{font-size:13px;color:var(--mute)}
-.tag{display:inline-block;font-size:12px;background:var(--acc2);border-radius:6px;padding:1px 6px;margin:4px 4px 0 0}
-.voltar{background:none;border:0;color:var(--acc);font-size:15px;cursor:pointer;padding:0}
-.cab-det{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-h2{margin:0 0 4px}
-h3.sec{margin:22px 0 10px}
-.barra{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:14px 0;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14px}
-.grupos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.grupo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-.grupo h4{margin:0 0 8px;font-size:13px;color:var(--acc);text-transform:uppercase;letter-spacing:.05em}
-.grupo ul,.grupo ol{margin:0;padding-left:18px}
-.grupo li{margin:5px 0}
+::placeholder{color:var(--ph);opacity:1}
+html,body{margin:0;padding:0;overflow-x:clip}
+body{min-height:100vh;background:radial-gradient(900px 420px at 0% -10%,rgba(198,93,123,.08),transparent 55%),radial-gradient(700px 380px at 100% 0%,rgba(171,122,90,.08),transparent 50%),var(--bg);
+  color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,h4,p{margin:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+a{color:var(--accent)}
+.wrap{width:min(1120px,calc(100% - 32px));margin:0 auto}
+
+/* topo */
+.top{position:sticky;top:0;z-index:5;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);background:rgba(250,246,245,.86);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding:16px 0 12px}
+.brand{font-family:var(--serif);font-weight:650;font-size:1.85rem;letter-spacing:-.04em;line-height:1;cursor:pointer}
+.acoes-topo{display:flex;gap:8px;margin-left:auto}
+.busca{padding-bottom:12px}
+#busca{width:100%;background:var(--raise) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23b79aa0' stroke-width='2'><circle cx='8' cy='8' r='5.5'/><path d='M12 12l4 4' stroke-linecap='round'/></svg>") no-repeat 14px 50%;
+  border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 42px;font-size:16px}
+#busca::-webkit-search-cancel-button{display:none}
+#filtros{display:flex;flex-direction:column;gap:8px;padding-bottom:14px}
+#filtros:empty{display:none}
+.linha{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rot{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);min-width:78px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:14px}
+.chip:hover{background:rgba(61,44,50,.05)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{padding:20px 0 56px}
+
+/* botões */
+.btn{border:0;border-radius:999px;padding:10px 16px;background:var(--raise);color:var(--ink);white-space:nowrap}
+.btn.primary{background:var(--accent);color:#fff5f3;font-weight:600}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.ghost:hover{background:rgba(61,44,50,.04)}
+.btn.ghost.on{background:var(--accent);color:#fff5f3;border-color:transparent}
+.btn.danger{background:transparent;color:var(--danger);padding-inline:8px}
+.btn.tiny{padding:8px 13px;font-size:14px}
+.btn:disabled{opacity:.55;cursor:progress}
+.addlink{border:0;background:none;color:var(--accent);font-weight:500;padding:6px 2px;font-size:14px;align-self:flex-start}
+.mini{border:0;background:none;color:var(--faint);font-size:20px;line-height:1;padding:0 6px}
+.mini:hover{color:var(--danger)}
+.icon-x{border:0;background:transparent;color:var(--muted);font-size:28px;line-height:1;padding:0 4px}
+
+/* cards */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{position:relative;cursor:pointer;display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:18px;
+  padding:16px;box-shadow:inset 3px 0 0 var(--gold);transition:transform .18s ease,border-color .18s ease;overflow:hidden;min-width:0}
+.card:hover{transform:translateY(-2px);border-color:rgba(61,44,50,.24)}
+.card.fav{box-shadow:inset 3px 0 0 var(--accent)}
+.foto{position:relative;overflow:hidden;background:rgba(61,44,50,.05) center/cover no-repeat}
+.card .foto{margin:-16px -16px 6px;aspect-ratio:4/3}
+/* embed do Instagram recortado: esconde o cabeçalho e mostra só a imagem do post */
+.foto.ig iframe{position:absolute;left:50%;top:-58px;transform:translateX(-50%);width:max(100%,330px);height:900px;border:0;pointer-events:none;background:transparent}
+.card h3{font-family:var(--serif);font-weight:560;font-size:1.32rem;letter-spacing:-.03em;line-height:1.15;padding-right:36px;overflow-wrap:anywhere}
+.card .foto ~ h3{padding-right:0}
+.meta{color:var(--faint);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:rgba(61,44,50,.05);color:var(--muted);border-radius:999px;padding:4px 9px;font-size:12px}
+.estrela{position:absolute;top:12px;right:12px;z-index:2;width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:var(--raise);
+  color:var(--faint);font-size:17px;line-height:1;display:grid;place-items:center;padding:0}
+.estrela:hover{color:var(--accent)}
+.estrela.on{background:var(--accent);color:#fff5f3;border-color:transparent}
+.vazio{color:var(--faint);padding:40px 0;text-align:center}
+.aviso{font-size:12.5px;color:var(--faint);margin-top:22px}
+
+/* receita aberta */
+.det-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.voltar{border:0;background:none;color:var(--muted);padding:0;font-size:15px}
+.voltar:hover{color:var(--ink)}
+.det-acoes{display:flex;gap:8px}
+.det h2{font-family:var(--serif);font-weight:600;font-size:2.15rem;letter-spacing:-.04em;line-height:1.08;margin-bottom:8px}
+.det .tags{margin-top:10px}
+.foto-grande{border-radius:18px;aspect-ratio:16/9;margin:18px 0 0;max-width:720px}
+.barra{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;margin:22px 0 6px;font-size:14px;color:var(--muted)}
+.barra select{background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:8px 12px;font-size:14px;margin-left:6px;color:var(--ink)}
+.dica{font-size:12.5px;color:var(--faint)}
+.secao{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:28px 0 10px}
+.grupos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.grupo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.grupo h4{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--gold);font-size:1.08rem;margin-bottom:6px}
+.grupo ul,.grupo ol{margin:0;padding-left:20px}
+.grupo li{margin:7px 0}
+.grupo li::marker{color:var(--faint)}
 .q,.qp{font-weight:600}
-.obs{color:var(--mute);font-size:13px}
-.notas{white-space:pre-line}
-.insta{margin:20px 0;max-width:420px}
-.insta iframe{width:100%;height:600px;border:1px solid var(--line);border-radius:12px;background:#fff}
-a{color:var(--acc)}
-.aviso{font-size:12px;color:var(--mute);margin-top:16px}
-.vazio{color:var(--mute);padding:30px 0;text-align:center}
-.btn{border:1px solid var(--acc);background:var(--acc);color:var(--on);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
-.btn.sec{background:transparent;color:var(--acc)}
-.btn:disabled{opacity:.6;cursor:default}
-.mini{border:0;background:none;color:var(--mute);font-size:18px;cursor:pointer;padding:0 4px}
-/* formulário */
-.form label.c{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
-.form .campo{width:100%}
-.form textarea{width:100%;min-height:60px}
-.duas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 14px}
-.importar{background:var(--card);border:1px dashed var(--acc);border-radius:12px;padding:10px 12px;margin:10px 0}
-.importar summary{cursor:pointer;color:var(--acc);font-weight:600}
-.importar textarea{min-height:160px;margin:10px 0}
-.fgrupo{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
-.fgrupo .gnome{flex:1;font-weight:600}
-.fing{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;padding-bottom:6px;border-bottom:1px dashed var(--line)}
-.fing .fq{width:80px}
-.fing .fu{width:170px}
-.fing .fi{flex:1 1 200px}
-.fing .fo{flex:1 1 120px}
-.fing label{font-size:13px;color:var(--mute);white-space:nowrap}
-.fing.agosto .fq{border-style:dashed}
-.fpasso{display:flex;gap:6px;align-items:flex-start;margin:6px 0}
-.fpasso textarea{min-height:44px}
-.acoes{display:flex;gap:10px;margin:20px 0;align-items:center;flex-wrap:wrap}
-.erro{color:#d0452f;font-size:14px}
-.sugs{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
-/* combobox: select em que dá pra digitar */
-.combo{position:relative}
-.cb-caixa{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:2px 6px}
-.combo:focus-within .cb-caixa{border-color:var(--acc)}
-.cb-in{flex:1 1 60px;min-width:50px;border:0!important;background:transparent!important;padding:4px 2px!important;outline:none}
+.obs{color:var(--faint);font-size:13.5px}
+.notas{white-space:pre-line;color:var(--muted);font-size:14.5px;margin-top:20px;max-width:720px}
+.qbtn{font:inherit;font-weight:600;color:inherit;background:none;border:0;border-bottom:1px dashed var(--gold);padding:0}
+.qbtn.trocado{color:var(--gold)}
+.insta{margin:24px 0 0;max-width:420px}
+.insta iframe{width:100%;height:620px;border:1px solid var(--line);border-radius:18px;background:#fff}
+
+/* janela (igual ao Verticais) */
+dialog{border:0;padding:0;background:transparent;color:inherit;width:min(760px,calc(100vw - 24px));margin:auto}
+dialog::backdrop{background:rgba(8,6,5,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sheet{display:flex;flex-direction:column;background:var(--raise);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);max-height:min(90vh,960px);overflow:hidden}
+.sheet:empty{display:none}
+.sheet-head,.sheet-foot{display:flex;flex:none;justify-content:space-between;gap:12px;background:var(--raise)}
+.sheet-head{align-items:flex-start;padding:20px 22px 10px}
+.sheet-head h2{font-family:var(--serif);font-weight:560;font-size:1.7rem;letter-spacing:-.03em}
+.eyebrow{font-family:var(--serif);font-style:italic;font-weight:500;font-size:.98rem;color:var(--gold)}
+.sheet-body{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto;padding:6px 22px 20px}
+.sheet-foot{align-items:center;padding:12px 22px 18px;border-top:1px solid var(--line)}
+.sheet-foot .dir{display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+/* campos */
+.field{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px;min-width:0}
+.field>input,.field>textarea,.fing input,.conv-linha input{width:100%;background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:16px;color:var(--ink)}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+.nome>input{font-family:var(--serif);font-size:1.35rem;letter-spacing:-.03em}
+.duas{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.sub{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+.hint{font-size:12.5px;color:var(--faint)}
+.erro{color:var(--danger);font-size:14px}
+.importar{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:rgba(61,44,50,.025)}
+.importar summary{cursor:pointer;color:var(--muted);font-size:14px}
+.importar textarea{width:100%;min-height:140px;margin:10px 0;font-size:14px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--raise)}
+.fgrupo{border:1px solid var(--line);border-radius:16px;padding:8px 12px 10px;background:rgba(61,44,50,.02);display:flex;flex-direction:column}
+.fgrupo+.fgrupo{margin-top:10px}
+.fgrupo-top{display:flex;gap:6px;align-items:center}
+.gnome{flex:1;min-width:0;border:0;background:transparent;font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--gold);padding:6px 2px}
+.gnome:focus{outline:none;border-bottom:1px solid var(--gold)}
+.fing{display:grid;grid-template-columns:78px 150px minmax(130px,1fr) minmax(90px,.7fr) auto auto;grid-template-areas:"q u i o g x";
+  gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
+.fing input{padding:8px 10px;border-radius:12px;font-size:15px}
+.fing .fq{grid-area:q}.fing .fu{grid-area:u}.fing .fi{grid-area:i}.fing .fo{grid-area:o}.fing .fg-l{grid-area:g}.fing .mini{grid-area:x}
+.fing .fg-l{font-size:13px;color:var(--muted);white-space:nowrap;display:flex;gap:5px;align-items:center}
+.fing.agosto .fq{border-style:dashed;border-color:var(--gold)}
+.fpasso{display:flex;gap:6px;align-items:flex-start;padding:5px 0}
+.fpasso textarea{flex:1;min-height:46px;border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:15px;background:var(--raise)}
+.sugs{display:flex;gap:6px;flex-wrap:wrap}
+.sugs:empty{display:none}
+.sugs .chip{font-size:12.5px;padding:4px 10px}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+
+/* combobox: select em que dá pra digitar (mesmo jeito do Verticais) */
+.combo{position:relative;min-width:0}
+.cb-caixa{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:46px;padding:5px 56px 5px 12px;border:1px solid var(--line);border-radius:14px;background:var(--raise)}
+.fing .cb-caixa,.conv-linha .cb-caixa{min-height:38px;border-radius:12px;padding:2px 50px 2px 8px}
+.combo:focus-within .cb-caixa{border-color:var(--gold)}
+.cb-in{flex:1 1 60px;min-width:50px;border:0!important;background:transparent!important;padding:4px 2px!important;font-size:15px;outline:none;color:var(--ink)}
 .cb-chips{display:contents}
-.cb-chip{display:inline-flex;align-items:center;background:var(--acc2);border-radius:6px;padding:2px 2px 2px 8px;font-size:13px}
-.cb-chip b{cursor:pointer;font-weight:400;color:var(--mute);padding:0 6px}
-.cb-x,.cb-seta{border:0;background:none;color:var(--mute);cursor:pointer;font-size:14px;padding:0 3px}
+.cb-chip{display:inline-flex;align-items:center;gap:2px;background:rgba(61,44,50,.08);border-radius:999px;padding:3px 4px 3px 10px;font-size:13px;color:var(--ink)}
+.cb-chip b{font-weight:400;color:var(--faint);cursor:pointer;padding:0 5px}
+.cb-chip b:hover{color:var(--ink)}
+.cb-x,.cb-seta{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:24px;height:24px;border:0;background:transparent;color:var(--faint);padding:0;cursor:pointer}
+.cb-x{right:28px;font-size:18px}
+.cb-seta{right:5px;font-size:11px}
 .combo:not(.tem) .cb-x{visibility:hidden}
-.cb-lista{position:absolute;left:0;top:100%;margin-top:2px;min-width:100%;width:max-content;max-width:320px;max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.25)}
-.cb-op{padding:6px 10px;cursor:pointer;font-size:14px}
-.cb-op.on,.cb-op:hover{background:var(--acc2)}
-.cb-vazio{padding:6px 10px;color:var(--mute);font-size:13px}
-/* favoritas e conversões */
-.botoes{display:flex;gap:8px;align-items:center}
-.card{position:relative}
-.estrela{position:absolute;top:8px;right:8px;border:0;border-radius:999px;width:34px;height:34px;font-size:18px;cursor:pointer;background:rgba(0,0,0,.35);color:#fff;line-height:1}
-.estrela.on{color:#ffc93c}
-.btn.fav.on{background:#ffc93c;border-color:#ffc93c;color:#2b2420}
-.qbtn{font:inherit;font-weight:600;color:inherit;background:none;border:0;border-bottom:1px dashed var(--acc);padding:0;cursor:pointer}
-.qbtn.trocado{color:var(--acc)}
-.dica{font-size:12px;color:var(--mute);margin:-4px 0 10px}
+.cb-lista{position:absolute;left:0;top:calc(100% + 4px);min-width:100%;width:max-content;max-width:min(340px,86vw);max-height:240px;overflow:auto;
+  background:var(--raise);border:1px solid var(--line);border-radius:14px;z-index:30;box-shadow:var(--shadow);padding:4px}
+.cb-op{padding:8px 10px;border-radius:10px;cursor:pointer;font-size:14px}
+.cb-op.on,.cb-op:hover{background:rgba(61,44,50,.06)}
+.cb-vazio{padding:8px 10px;color:var(--faint);font-size:13px}
+
+/* conversões */
+.nova-conv{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(61,44,50,.02)}
+.conv-linha{display:grid;grid-template-columns:72px minmax(120px,1fr) auto 72px minmax(120px,1fr);gap:6px;align-items:center}
+.conv-linha input{padding:8px 10px;border-radius:12px;font-size:15px}
+.igual{color:var(--muted);text-align:center}
 .convs{list-style:none;padding:0;margin:0}
-.convs li{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0}
-.nova-conv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--card);border:1px dashed var(--acc);border-radius:12px;padding:10px 12px;margin:12px 0}
-.nova-conv .cq{width:70px}
-.nova-conv .cu{width:170px}
-.nova-conv .ci{flex:1 1 200px}
+.convs li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.convs li:first-child{border-top:0}
+
+@media (max-width:640px){
+  .brand{font-size:1.55rem}
+  .bar{gap:8px}
+  .acoes-topo .btn{padding:8px 11px}
+  .rot{min-width:0;width:100%}
+  .det h2{font-size:1.75rem}
+  dialog{width:100vw;max-width:100vw;margin:auto 0 0}
+  .sheet{border-radius:22px 22px 0 0;max-height:94vh;max-height:94dvh}
+  .sheet-head,.sheet-body,.sheet-foot{padding-left:16px;padding-right:16px}
+  .fing{grid-template-columns:70px minmax(0,1fr) auto;grid-template-areas:"q u x" "i i i" "o o g";padding:10px 0}
+  .conv-linha{grid-template-columns:64px minmax(0,1fr);grid-template-areas:"a b" "e e" "c d"}
+  .conv-linha>:nth-child(1){grid-area:a}.conv-linha>:nth-child(2){grid-area:b}.conv-linha>:nth-child(3){grid-area:e}
+  .conv-linha>:nth-child(4){grid-area:c}.conv-linha>:nth-child(5){grid-area:d}
+}
 </style>
 </head>
 <body>
-<header><div class="topo">
-  <div class="topo-linha"><h1>🥣 Carbinhos</h1><div class="botoes">
-    <button class="btn sec" data-tela="conv" title="Cadastrar conversões de medidas">⚖️ Conversões</button>
-    <button class="btn" data-novo>+ Nova receita</button></div></div>
-  <input id="busca" type="search" placeholder="Buscar por nome, ingrediente ou tag…" autocomplete="off">
+<header class="top"><div class="wrap">
+  <div class="bar"><h1 class="brand" data-voltar>Carbinhos</h1><div class="acoes-topo">
+    <button class="btn ghost tiny" data-tela="conv" title="Conversões de medidas">⚖️ Conversões</button>
+    <button class="btn primary tiny" data-novo>+ Receita</button></div></div>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar por nome, ingrediente ou tag" autocomplete="off"></div>
   <div id="filtros"></div>
 </div></header>
-<main id="app"><div class="vazio">Carregando receitas…</div></main>
+<main class="wrap" id="app"><div class="vazio">Carregando receitas…</div></main>
+<dialog id="dlg"><div class="sheet" id="dlg-sheet"></div></dialog>
 
 <script>
 var D = null;
@@ -287,30 +380,29 @@ function filtros() {
   D.receitas.forEach(function (r) { if (r.categoria) cats[r.categoria] = 1; });
 
   var h = '';
+  // primeira linha: favoritas + categorias; depois as tags (agrupadas pelo "tipo" da aba Tags)
+  var cl = Object.keys(cats).sort(), linha1 = [];
   if (D.receitas.some(function (r) { return r.favorita; })) {
-    h += '<div class="linha"><span class="rot"></span><button class="chip' + (estado.fav ? ' on' : '') + '" data-filtrofav>★ Favoritas</button></div>';
+    linha1.push('<button class="chip' + (estado.fav ? ' on' : '') + '" data-filtrofav>★ Favoritas</button>');
   }
-  var cl = Object.keys(cats).sort();
-  if (cl.length > 1) h += linha('Categoria', cl.map(function (c) { return chip(c, 'cat', estado.cat === c); }));
-  Object.keys(grupos).sort().forEach(function (tp) {
-    h += linha(tp, grupos[tp].sort().map(function (t) { return chip(t, 'tag', estado.tags.indexOf(norm(t)) > -1); }));
+  if (cl.length > 1) linha1 = linha1.concat(cl.map(function (c) { return chip(c, 'cat', estado.cat === c); }));
+  if (linha1.length) h += '<div class="linha">' + linha1.join('') + '</div>';
+  var tipos = Object.keys(grupos).sort();
+  tipos.forEach(function (tp) {
+    h += linha(tipos.length > 1 ? tp : '', grupos[tp].sort().map(function (t) { return chip(t, 'tag', estado.tags.indexOf(norm(t)) > -1); }));
   });
-  el.innerHTML = h;
-  el.style.display = (estado.aberta || estado.form || estado.tela !== 'lista') ? 'none' : '';
+  el.innerHTML = estado.aberta ? '' : h;
 }
-function linha(rot, chips) { return '<div class="linha"><span class="rot">' + esc(rot) + '</span>' + chips.join('') + '</div>'; }
+function linha(rot, chips) { return '<div class="linha">' + (rot ? '<span class="rot">' + esc(rot) + '</span>' : '') + chips.join('') + '</div>'; }
 function chip(t, tipo, on) { return '<button class="chip' + (on ? ' on' : '') + '" data-' + tipo + '="' + esc(t) + '">' + esc(t) + '</button>'; }
 
 document.addEventListener('click', function (e) {
   var b = e.target.closest('[data-fav],[data-alt],[data-tela],[data-filtrofav],[data-tag],[data-cat],[data-abrir],[data-voltar],[data-novo],[data-editar]');
   if (!b || !D) return;
-  if (b.hasAttribute('data-novo')) { estado.tela = 'lista'; return abrirForm(null); }
-  if (b.hasAttribute('data-editar')) return abrirForm(receita(b.dataset.editar));
-  if (b.hasAttribute('data-tela')) {
-    estado.form = null; estado.aberta = null; estado.tela = b.dataset.tela;
-    filtros(); render(); window.scrollTo(0, 0); return;
-  }
   if (estado.form) return;
+  if (b.hasAttribute('data-novo')) return abrirForm(null);
+  if (b.hasAttribute('data-editar')) return abrirForm(receita(b.dataset.editar));
+  if (b.hasAttribute('data-tela')) return abrirConversoes();
   if (b.hasAttribute('data-fav')) return favoritar(b.dataset.fav);
   if (b.hasAttribute('data-alt')) return trocarMedida(b.dataset.alt);
   if (b.hasAttribute('data-filtrofav')) {
@@ -323,16 +415,42 @@ document.addEventListener('click', function (e) {
   } else if (b.hasAttribute('data-abrir')) {
     estado.aberta = b.dataset.abrir; estado.fator = 1; estado.alt = {}; window.scrollTo(0, 0);
   } else {
-    estado.aberta = null; estado.tela = 'lista';
+    estado.aberta = null;
   }
   filtros(); render();
 });
 document.getElementById('busca').addEventListener('input', function (e) {
   estado.busca = norm(e.target.value);
-  if (estado.form) return;
-  estado.aberta = null; estado.tela = 'lista';
+  estado.aberta = null;
   filtros(); render();
 });
+
+/* ---------- janela (formulário e conversões) ---------- */
+var dlg = document.getElementById('dlg');
+function abrirJanela(html, aoFechar) {
+  document.getElementById('dlg-sheet').innerHTML = html;
+  dlg._aoFechar = aoFechar || null;
+  if (!dlg.open) dlg.showModal();
+}
+function fecharJanela() { if (dlg.open) dlg.close(); }
+dlg.addEventListener('close', function () {
+  var f = dlg._aoFechar;
+  dlg._aoFechar = null;
+  document.getElementById('dlg-sheet').innerHTML = '';
+  if (f) f();
+});
+// Esc não fecha o formulário (para não perder o que foi digitado); use Cancelar ou ×
+dlg.addEventListener('cancel', function (e) { if (estado.form) e.preventDefault(); });
+dlg.addEventListener('click', function (e) { if (e.target.closest('[data-fechar]')) fecharJanela(); });
+
+/** Botão de apagar em dois cliques: o primeiro pede confirmação. */
+function confirmou(btn, texto) {
+  if (btn.dataset.confirma) return true;
+  var orig = btn.textContent;
+  btn.dataset.confirma = '1'; btn.textContent = texto;
+  setTimeout(function () { if (document.body.contains(btn)) { delete btn.dataset.confirma; btn.textContent = orig; } }, 4000);
+  return false;
+}
 
 /* ---------- favoritas ---------- */
 function favoritar(id) {
@@ -364,8 +482,7 @@ function trocarMedida(chave) {
 
 /* ---------- telas ---------- */
 function render() {
-  if (!D || estado.form) return;
-  if (estado.tela === 'conv') return telaConversoes();
+  if (!D) return;
   if (estado.aberta) {
     var r = receita(estado.aberta);
     if (r) return detalhe(r);
@@ -377,12 +494,10 @@ function render() {
     .map(function (x) { return x[0]; });
   var h = rs.length ? '<div class="grade">' + rs.map(card).join('') + '</div>'
                     : '<div class="vazio">Nenhuma receita encontrada.</div>';
-  h += convBox();
   if (D.tagsDesconhecidas.length) {
     h += '<div class="aviso">Tags usadas nas receitas mas que não estão na aba Tags: ' + esc(D.tagsDesconhecidas.join(', ')) + '</div>';
   }
   app().innerHTML = h;
-  bindConv();
 }
 
 function passa(r) {
@@ -410,14 +525,24 @@ function insta(u) {
 }
 function tagsHtml(r) { return r.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join(''); }
 
-function card(r) {
+/** Foto do card: o "Link da foto" se tiver; senão a imagem do post do Instagram (embed recortado). */
+function fotoHtml(r, classe) {
   var f = foto(r.foto);
+  if (f) return '<div class="foto ' + classe + '" style="background-image:url(&quot;' + esc(f) + '&quot;)"></div>';
+  var e = insta(r.insta);
+  if (e) return '<div class="foto ig ' + classe + '"><iframe src="' + esc(e) + '" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe></div>';
+  return '';
+}
+
+function card(r) {
   var meta = [r.categoria, r.tempo ? r.tempo + ' min' : ''].filter(Boolean).join(' · ');
-  return '<div class="card" data-abrir="' + esc(r.id) + '">' +
+  return '<div class="card' + (r.favorita ? ' fav' : '') + '" data-abrir="' + esc(r.id) + '">' +
+    fotoHtml(r, '') +
     '<button class="estrela' + (r.favorita ? ' on' : '') + '" data-fav="' + esc(r.id) + '" title="' +
       (r.favorita ? 'Tirar das favoritas' : 'Favoritar') + '">' + (r.favorita ? '★' : '☆') + '</button>' +
-    '<div class="img"' + (f ? ' style="background-image:url(&quot;' + esc(f) + '&quot;)"' : '') + '>' + (f ? '' : '🍰') + '</div>' +
-    '<div class="txt"><b>' + esc(r.nome || r.id) + '</b><div class="meta">' + esc(meta) + '</div>' + tagsHtml(r) + '</div></div>';
+    '<h3>' + esc(r.nome || r.id) + '</h3>' +
+    (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
+    (r.tags.length ? '<div class="tags">' + tagsHtml(r) + '</div>' : '') + '</div>';
 }
 
 function item(it) {
@@ -493,113 +618,94 @@ function opt(v, rot, sel) { return '<option value="' + esc(v) + '"' + (sel ? ' s
 
 function detalhe(r) {
   var meta = [r.categoria, r.rendimento, r.tempo ? r.tempo + ' min' : ''].filter(Boolean).join(' · ');
-  var h = '<div class="cab-det"><button class="voltar" data-voltar>← Voltar</button><div class="botoes">' +
-    '<button class="btn sec fav' + (r.favorita ? ' on' : '') + '" data-fav="' + esc(r.id) + '">' +
+  var h = '<div class="det"><div class="det-top"><button class="voltar" data-voltar>← Receitas</button><div class="det-acoes">' +
+    '<button class="btn ghost tiny' + (r.favorita ? ' on' : '') + '" data-fav="' + esc(r.id) + '">' +
       (r.favorita ? '★ Favorita' : '☆ Favoritar') + '</button>' +
-    '<button class="btn sec" data-editar="' + esc(r.id) + '">✏️ Editar</button></div></div>' +
-    '<h2>' + esc(r.nome || r.id) + '</h2><div class="meta">' + esc(meta) + '</div><div>' + tagsHtml(r) + '</div>';
+    '<button class="btn ghost tiny" data-editar="' + esc(r.id) + '">Editar</button></div></div>' +
+    '<h2>' + esc(r.nome || r.id) + '</h2>' +
+    (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
+    (r.tags.length ? '<div class="tags">' + tagsHtml(r) + '</div>' : '');
+  var f = foto(r.foto);
+  if (f) h += '<div class="foto foto-grande" style="background-image:url(&quot;' + esc(f) + '&quot;)"></div>';
 
   var modos = [['original', 'como na receita'], ['auto', 'mais prático']]
     .concat(['xicara', 'colher_sopa', 'colher_cha', 'ml'].filter(function (k) { return ML[k]; })
       .map(function (k) { return [k, 'tudo em ' + nomeU(k, 2)]; }))
     .concat(GR.g ? [['g', 'tudo em gramas (peso)']] : []);
   h += '<div class="barra">' +
-    '<label>Medidas: <select id="modo">' + modos.map(function (m) { return opt(m[0], m[1], estado.modo === m[0]); }).join('') + '</select></label>' +
-    '<label>Quantidade: <select id="fator">' + [0.5, 1, 1.5, 2, 3].map(function (f) { return opt(f, '× ' + fmt(f), estado.fator === f); }).join('') + '</select></label>' +
+    '<label>Medidas<select id="modo">' + modos.map(function (m) { return opt(m[0], m[1], estado.modo === m[0]); }).join('') + '</select></label>' +
+    '<label>Porção<select id="fator">' + [0.5, 1, 1.5, 2, 3].map(function (x) { return opt(x, '× ' + fmt(x), estado.fator === x); }).join('') + '</select></label>' +
     '</div>' +
-    '<p class="dica">Quantidade sublinhada: clique para ver em outra medida (peso, volume, unidades). ' +
-    'Conversões como “1 cs de manteiga = 13 g” ficam em ⚖️ Conversões.</p>';
+    '<p class="dica">Toque numa quantidade sublinhada para ver em outra medida.</p>';
 
   if (r.grupos.length) {
-    h += '<div class="grupos">' + r.grupos.map(function (g) {
-      return '<div class="grupo"><h4>' + esc(g.nome || 'Ingredientes') + '</h4><ul>' + g.itens.map(item).join('') + '</ul></div>';
+    h += '<h3 class="secao">Ingredientes</h3><div class="grupos">' + r.grupos.map(function (g) {
+      return '<div class="grupo">' + (g.nome ? '<h4>' + esc(g.nome) + '</h4>' : '') + '<ul>' + g.itens.map(item).join('') + '</ul></div>';
     }).join('') + '</div>';
   }
   if (r.passos.length) {
     var ings = ingredientesDe(r);
-    h += '<h3 class="sec">Modo de preparo</h3><div class="grupos">' + r.passos.map(function (g) {
+    h += '<h3 class="secao">Modo de preparo</h3><div class="grupos">' + r.passos.map(function (g) {
       return '<div class="grupo">' + (g.nome ? '<h4>' + esc(g.nome) + '</h4>' : '') + '<ol>' +
         g.itens.map(function (p) { return '<li>' + passoHtml(p.passo, ings) + '</li>'; }).join('') + '</ol></div>';
     }).join('') + '</div>';
   }
-  if (r.obs) h += '<p class="obs notas">' + esc(r.obs) + '</p>';
+  if (r.obs) h += '<p class="notas">' + esc(r.obs) + '</p>';
 
   var e = insta(r.insta);
   if (e) {
-    h += '<div class="insta"><iframe src="' + esc(e) + '" loading="lazy" scrolling="no" allowtransparency="true"></iframe>' +
-      '<div><a href="' + esc(r.insta) + '" target="_blank" rel="noopener">Abrir no Instagram ↗</a></div></div>';
+    h += '<h3 class="secao">No Instagram</h3><div class="insta"><iframe src="' + esc(e) + '" loading="lazy" scrolling="no" allowtransparency="true"></iframe>' +
+      '<p class="hint"><a href="' + esc(r.insta) + '" target="_blank" rel="noopener">Abrir no Instagram ↗</a></p></div>';
   } else if (r.insta) {
-    h += '<p><a href="' + esc(r.insta) + '" target="_blank" rel="noopener">Ver vídeo ↗</a></p>';
+    h += '<p class="hint" style="margin-top:20px"><a href="' + esc(r.insta) + '" target="_blank" rel="noopener">Ver vídeo ↗</a></p>';
   }
 
-  app().innerHTML = h;
+  app().innerHTML = h + '</div>';
   document.getElementById('modo').onchange = function () { estado.modo = this.value; estado.alt = {}; render(); };
   document.getElementById('fator').onchange = function () { estado.fator = +this.value; render(); };
 }
 
-/* ---------- conversor avulso (na lista) ---------- */
-function convBox() {
-  var ks = Object.keys(ML);
-  if (!ks.length) return '';
-  var ops = function (sel) { return ks.map(function (k) { return opt(k, NOMES[k], k === sel); }).join(''); };
-  return '<div class="barra"><b>Conversor</b>' +
-    '<input id="cq" value="1" size="4" inputmode="decimal">' +
-    '<select id="cde">' + ops('xicara') + '</select> =' +
-    '<span id="cres" class="q"></span>' +
-    '<select id="cpara">' + ops('colher_sopa') + '</select></div>';
-}
-function bindConv() {
-  var q = document.getElementById('cq');
-  if (!q) return;
-  var de = document.getElementById('cde'), para = document.getElementById('cpara'), res = document.getElementById('cres');
-  function calc() {
-    var n = qtdNum(q.value);
-    res.textContent = n == null ? '?' : fmt(n * ML[de.value] / ML[para.value]);
-  }
-  q.oninput = de.onchange = para.onchange = calc;
-  calc();
-}
-
-/* ---------- tela de conversões ---------- */
+/* ---------- conversões (janela) ---------- */
 function textoConv(c) {
   function nome(u, q) { return u === 'un' ? (q > 1 ? 'unidades' : 'unidade') : nomeU(u, q); }
   return fmtU(c.qtd, c.unidade) + ' ' + nome(c.unidade, c.qtd) + ' = ' + fmtU(c.qtd_equiv, c.unidade_equiv) + ' ' + nome(c.unidade_equiv, c.qtd_equiv);
 }
 /** Ex.: com 1 cs = 13 g, mostra "1 xícara ≈ 208 g" para ajudar a conferir. */
 function exemploConv(c) {
-  var a = dimensao(c.unidade)[0], b = dimensao(c.unidade_equiv)[0], ing = c.ingrediente;
-  var ex = null;
+  var a = dimensao(c.unidade)[0], b = dimensao(c.unidade_equiv)[0];
   if ((a === 'vol' && b === 'peso') || (a === 'peso' && b === 'vol')) {
-    var g = paraUnidade(1, 'xicara', 'g', ing || '');
-    if (g != null && ML.xicara) ex = '1 xícara ≈ ' + fmtU(g, 'g') + ' g';
+    var g = paraUnidade(1, 'xicara', 'g', c.ingrediente || '');
+    if (g != null && ML.xicara) return '1 xícara ≈ ' + fmtU(g, 'g') + ' g';
   }
-  return ex;
+  return null;
 }
-function telaConversoes() {
+function abrirConversoes() {
   var cs = D.conversoes.slice().sort(function (a, b) { return norm(a.ingrediente).localeCompare(norm(b.ingrediente)); });
-  var h = '<div class="cab-det"><button class="voltar" data-voltar>← Voltar</button></div>' +
-    '<h2>⚖️ Conversões</h2>' +
-    '<p class="obs">Diga quanto uma medida vale em outra, por ingrediente. Ex.: manteiga, 1 colher de sopa = 13 g; ' +
-    'ovo, 1 unidade = 50 g. Com isso, na receita dá para ver o ingrediente em peso, volume ou unidades. ' +
-    'Sem ingrediente, a conversão vale para todos.</p>' +
-    '<div class="nova-conv"><div class="ci" id="c-ing"></div>' +
-    '<input class="cq" id="c-q1" placeholder="qtd" inputmode="decimal" value="1"><div class="cu" id="c-u1"></div> =' +
-    '<input class="cq" id="c-q2" placeholder="qtd" inputmode="decimal"><div class="cu" id="c-u2"></div>' +
-    '<button class="btn" id="c-add">Adicionar</button><span id="c-msg" class="erro"></span></div>';
-  if (!cs.length) h += '<div class="vazio">Nenhuma conversão ainda.</div>';
-  else {
-    h += '<ul class="convs">' + cs.map(function (c, i) {
-      var ex = exemploConv(c);
-      return '<li><span><b>' + esc(c.ingrediente || 'qualquer ingrediente') + '</b> · ' + esc(textoConv(c)) +
-        (ex ? ' <span class="obs">(' + esc(ex) + ')</span>' : '') + '</span>' +
-        '<button class="mini" data-apagarconv="' + D.conversoes.indexOf(c) + '" title="Apagar">🗑</button></li>';
-    }).join('') + '</ul>';
-  }
-  app().innerHTML = h;
+  var lista = cs.length ? '<ul class="convs">' + cs.map(function (c) {
+    var ex = exemploConv(c);
+    return '<li><span><b>' + esc(c.ingrediente || 'qualquer ingrediente') + '</b> · ' + esc(textoConv(c)) +
+      (ex ? ' <span class="obs">(' + esc(ex) + ')</span>' : '') + '</span>' +
+      '<button type="button" class="btn danger tiny" data-apagarconv="' + D.conversoes.indexOf(c) + '">Apagar</button></li>';
+  }).join('') + '</ul>' : '<p class="vazio">Nenhuma conversão ainda.</p>';
+  abrirJanela(
+    '<div class="sheet-head"><div><p class="eyebrow">Medidas</p><h2>Conversões</h2></div>' +
+      '<button type="button" class="icon-x" data-fechar aria-label="Fechar">×</button></div>' +
+    '<div class="sheet-body">' +
+      '<p class="hint">Quanto uma medida vale em outra, por ingrediente (ex.: manteiga, 1 colher de sopa = 13 g). ' +
+      'Com isso, na receita dá para ver o ingrediente em peso, volume ou unidades. Sem ingrediente, vale para todos.</p>' +
+      '<div class="nova-conv"><div class="field">Ingrediente<div id="c-ing"></div></div>' +
+        '<div class="conv-linha"><input id="c-q1" placeholder="qtd" inputmode="decimal" value="1"><div id="c-u1"></div>' +
+        '<span class="igual">=</span><input id="c-q2" placeholder="qtd" inputmode="decimal"><div id="c-u2"></div></div>' +
+        '<div class="linha"><button type="button" class="btn primary tiny" id="c-add">Adicionar</button><span id="c-msg" class="erro"></span></div></div>' +
+      lista +
+    '</div>' +
+    '<div class="sheet-foot"><div class="dir"><button type="button" class="btn ghost" data-fechar>Fechar</button></div></div>');
+
   var uops = opcoesUnidade();
-  new Combo(document.getElementById('c-ing'), { opcoes: opcoes(D.ingredientes || []), valor: '', criar: true, dica: 'ingrediente (vazio = todos)' });
+  new Combo(document.getElementById('c-ing'), { opcoes: opcoes(D.ingredientes || []), valor: '', criar: true, dica: 'vazio = vale para todos' });
   new Combo(document.getElementById('c-u1'), { opcoes: uops, valor: 'colher_sopa', criar: true, dica: 'unidade' });
   new Combo(document.getElementById('c-u2'), { opcoes: uops, valor: 'g', criar: true, dica: 'unidade' });
+  function atualizar(d) { carregar(d); render(); abrirConversoes(); }
   document.getElementById('c-add').onclick = function () {
     var btn = this, msg = document.getElementById('c-msg');
     var c = {
@@ -608,20 +714,17 @@ function telaConversoes() {
     };
     if (!c.qtd || !c.qtd_equiv) { msg.textContent = 'Preencha as duas quantidades.'; return; }
     btn.disabled = true; btn.textContent = 'Salvando…'; msg.textContent = '';
-    google.script.run
-      .withSuccessHandler(function (d) { carregar(d); render(); })
+    google.script.run.withSuccessHandler(atualizar)
       .withFailureHandler(function (e) { btn.disabled = false; btn.textContent = 'Adicionar'; msg.textContent = (e && e.message) || 'Erro ao salvar.'; })
       .salvarConversao(c);
   };
   [].forEach.call(document.querySelectorAll('[data-apagarconv]'), function (b) {
     b.onclick = function () {
-      var c = D.conversoes[+b.dataset.apagarconv];
-      if (!confirm('Apagar a conversão "' + (c.ingrediente || 'qualquer ingrediente') + ': ' + textoConv(c) + '"?')) return;
-      b.disabled = true;
-      google.script.run
-        .withSuccessHandler(function (d) { carregar(d); render(); })
-        .withFailureHandler(function (e) { b.disabled = false; alert((e && e.message) || 'Erro ao apagar.'); })
-        .apagarConversao(c);
+      if (!confirmou(b, 'Apagar mesmo?')) return;
+      b.disabled = true; b.textContent = 'Apagando…';
+      google.script.run.withSuccessHandler(atualizar)
+        .withFailureHandler(function (e) { b.disabled = false; b.textContent = 'Apagar'; document.getElementById('c-msg').textContent = (e && e.message) || 'Erro ao apagar.'; })
+        .apagarConversao(D.conversoes[+b.dataset.apagarconv]);
     };
   });
 }
@@ -748,7 +851,7 @@ Combo.prototype.tecla = function (e) {
     else if (this.multi && cru && this.cfg.criar) this.escolher({ v: cru, t: cru });
     else this.lista.hidden = true;
   }
-  else if (e.key === 'Escape') { this.lista.hidden = true; }
+  else if (e.key === 'Escape') { if (!this.lista.hidden) { e.preventDefault(); e.stopPropagation(); } this.lista.hidden = true; }
   else if (e.key === 'Tab' && !this.lista.hidden && this.ativo >= 0 && this.itens[this.ativo] && cru) {
     this.escolher(this.itens[this.ativo], true);
   }
@@ -766,41 +869,49 @@ function receita(id) { return D.receitas.filter(function (x) { return x.id === i
 function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function el(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
 function campo(rot, id, v, extra) {
-  return '<div><label class="c">' + rot + '</label><input class="campo" id="' + id + '" value="' + esc(v || '') + '" ' + (extra || '') + '></div>';
+  return '<label class="field">' + rot + '<input id="' + id + '" value="' + esc(v || '') + '" ' + (extra || '') + '></label>';
 }
 function combo(id) { return document.getElementById(id)._combo; }
 
+/** Formulário numa janela, com Excluir / Cancelar / Salvar fixos no rodapé (como no Verticais). */
 function abrirForm(r) {
   estado.form = { original: r ? r.id : '', idManual: !!r, ultimoPasso: null };
-  filtros();
-  window.scrollTo(0, 0);
   var cats = {};
   D.receitas.forEach(function (x) { if (x.categoria) cats[x.categoria] = 1; });
-  app().innerHTML = '<div class="form"><h2>' + (r ? 'Editar receita' : 'Nova receita') + '</h2>' +
-    '<details class="importar"' + (r ? '' : ' open') + '><summary>📋 Colar receita em texto</summary>' +
-    '<textarea id="f-texto" placeholder="Cole aqui a receita inteira (título, ingredientes e modo de preparo)…"></textarea>' +
-    '<button type="button" class="btn sec" data-acao="importar">Preencher o formulário</button> <span id="f-imsg" class="obs"></span></details>' +
-    '<label class="c">Nome *</label><input class="campo" id="f-nome" value="' + esc(r ? r.nome : '') + '">' +
-    '<label class="c">Identificador (sem espaço; gerado a partir do nome)</label><input class="campo" id="f-id" value="' + esc(r ? r.id : '') + '">' +
-    '<div class="duas">' +
-      '<div><label class="c">Categoria</label><div id="f-cat"></div></div>' +
-      campo('Rendimento', 'f-rend', r && r.rendimento) +
-      campo('Tempo (min)', 'f-tempo', r && r.tempo, 'inputmode="numeric"') +
-      campo('Link do Instagram', 'f-insta', r && r.insta) +
-      campo('Link da foto', 'f-foto', r && r.foto) +
+  abrirJanela(
+    '<div class="sheet-head"><div><p class="eyebrow">' + (r ? esc(r.nome) : 'Caderninho') + '</p>' +
+      '<h2>' + (r ? 'Editar receita' : 'Nova receita') + '</h2></div>' +
+      '<button type="button" class="icon-x" data-acao="cancelar" aria-label="Fechar">×</button></div>' +
+    '<div class="sheet-body">' +
+      '<details class="importar"' + (r ? '' : ' open') + '><summary>Colar receita em texto</summary>' +
+        '<textarea id="f-texto" placeholder="Cole aqui a receita inteira (título, ingredientes e modo de preparo)"></textarea>' +
+        '<div class="linha"><button type="button" class="btn ghost tiny" data-acao="importar">Preencher o formulário</button>' +
+        '<span id="f-imsg" class="hint"></span></div></details>' +
+      '<label class="field nome">Nome<input id="f-nome" value="' + esc(r ? r.nome : '') + '"></label>' +
+      '<div class="duas">' +
+        '<div class="field">Categoria<div id="f-cat"></div></div>' +
+        campo('Rendimento', 'f-rend', r && r.rendimento) +
+        campo('Tempo (min)', 'f-tempo', r && r.tempo, 'inputmode="numeric"') +
+      '</div>' +
+      '<div class="field">Tags<div id="f-tags"></div></div>' +
+      '<p class="sub">Ingredientes</p><div id="f-grupos"></div>' +
+      '<button type="button" class="addlink" data-acao="add-grupo">+ Grupo de ingredientes</button>' +
+      '<p class="sub">Modo de preparo</p>' +
+      '<p class="hint">Para mostrar a quantidade de um ingrediente no passo, escreva o nome dele entre chaves, ex.: {sal} → (s. ½ cc). ' +
+      'Clicando num passo, os ingredientes aparecem aqui para inserir:</p><div class="sugs" id="f-ingchips"></div>' +
+      '<div id="f-passos"></div>' +
+      '<button type="button" class="addlink" data-acao="add-pgrupo">+ Grupo de passos</button>' +
+      '<p class="sub">Mais</p>' +
+      '<div class="duas">' + campo('Link do Instagram', 'f-insta', r && r.insta) + campo('Link da foto (opcional)', 'f-foto', r && r.foto) + '</div>' +
+      '<label class="field">Observações<textarea id="f-obs">' + esc(r ? r.obs : '') + '</textarea></label>' +
+      campo('Identificador (vai no link; sai do nome)', 'f-id', r && r.id) +
     '</div>' +
-    '<label class="c">Tags</label><div id="f-tags"></div>' +
-    '<h3 class="sec">Ingredientes</h3><div id="f-grupos"></div>' +
-    '<button type="button" class="btn sec" data-acao="add-grupo">+ Grupo de ingredientes</button>' +
-    '<h3 class="sec">Modo de preparo</h3>' +
-    '<p class="obs">Para mostrar a quantidade de um ingrediente no passo, escreva o nome dele entre chaves, ex.: <b>{sal}</b> → (s. ½ cc). ' +
-    'Clicando num passo, os ingredientes aparecem aqui para inserir:</p><div class="sugs" id="f-ingchips"></div>' +
-    '<div id="f-passos"></div>' +
-    '<button type="button" class="btn sec" data-acao="add-pgrupo">+ Grupo de passos</button>' +
-    '<label class="c">Observações</label><textarea id="f-obs">' + esc(r ? r.obs : '') + '</textarea>' +
-    '<div class="acoes"><button type="button" class="btn" data-acao="salvar">Salvar</button>' +
-    '<button type="button" class="btn sec" data-acao="cancelar">Cancelar</button><span id="f-msg" class="erro"></span></div>' +
-    '</div>';
+    '<div class="sheet-foot">' +
+      (r ? '<button type="button" class="btn danger" data-acao="excluir">Excluir</button>' : '') +
+      '<div class="dir"><span id="f-msg" class="erro"></span>' +
+      '<button type="button" class="btn ghost" data-acao="cancelar">Cancelar</button>' +
+      '<button type="button" class="btn primary" data-acao="salvar">Salvar</button></div></div>',
+    function () { estado.form = null; });
 
   new Combo(document.getElementById('f-cat'), { opcoes: opcoes(Object.keys(cats).sort()), valor: r ? r.categoria : '', criar: true, dica: 'Escolha ou digite' });
   new Combo(document.getElementById('f-tags'), { opcoes: opcoes(D.tags.map(function (t) { return t.tag; })), valor: r ? r.tags : [], multi: true, criar: true, dica: 'Escolha ou digite' });
@@ -811,13 +922,13 @@ function abrirForm(r) {
   var nome = document.getElementById('f-nome'), id = document.getElementById('f-id');
   nome.oninput = function () { if (!estado.form.idManual) id.value = slug(nome.value); };
   id.oninput = function () { estado.form.idManual = true; };
-  if (r) nome.focus(); else document.getElementById('f-texto').focus();
+  if (!r) document.getElementById('f-texto').focus();
 }
 
 function caixaGrupo(dica, botao, acao) {
-  return el('<div class="fgrupo"><div class="linha"><input class="gnome" placeholder="' + dica + '">' +
-    '<button type="button" class="mini" data-acao="del-grupo" title="Remover grupo">🗑</button></div>' +
-    '<div class="itens"></div><button type="button" class="btn sec" data-acao="' + acao + '">' + botao + '</button></div>');
+  return el('<div class="fgrupo"><div class="fgrupo-top"><input class="gnome" placeholder="' + dica + '">' +
+    '<button type="button" class="mini" data-acao="del-grupo" title="Remover grupo">×</button></div>' +
+    '<div class="itens"></div><button type="button" class="addlink" data-acao="' + acao + '">' + botao + '</button></div>');
 }
 function addGrupo(g) {
   var box = caixaGrupo('Nome do grupo, ex.: Secos (opcional)', '+ Ingrediente', 'add-ing');
@@ -828,7 +939,7 @@ function addGrupo(g) {
 function addIng(box, it) {
   var row = el('<div class="fing"><input class="fq" placeholder="qtd" inputmode="decimal"><div class="fu"></div><div class="fi"></div>' +
     '<input class="fo" placeholder="obs">' +
-    '<label title="Marque se for a gosto. A quantidade vira só uma sugestão."><input type="checkbox" class="fg"> a gosto</label>' +
+    '<label class="fg-l" title="Marque se for a gosto. A quantidade vira só uma sugestão."><input type="checkbox" class="fg"> a gosto</label>' +
     '<button type="button" class="mini" data-acao="del" title="Remover">×</button></div>');
   var fq = row.querySelector('.fq'), fg = row.querySelector('.fg');
   fq.value = qtdTexto(it.qtd);
@@ -888,9 +999,26 @@ document.addEventListener('click', function (e) {
   else if (a === 'del-grupo') box.remove();
   else if (a === 'ins') inserirNoPasso('{' + b.dataset.v + '}');
   else if (a === 'importar') importar();
-  else if (a === 'cancelar') { estado.form = null; filtros(); render(); }
+  else if (a === 'cancelar') fecharJanela();
   else if (a === 'salvar') salvar(b);
+  else if (a === 'excluir') excluir(b);
 });
+
+function excluir(btn) {
+  var id = estado.form.original, msg = document.getElementById('f-msg');
+  if (!confirmou(btn, 'Clique de novo para excluir')) return;
+  btn.disabled = true; btn.textContent = 'Excluindo…'; msg.textContent = '';
+  google.script.run
+    .withSuccessHandler(function (d) {
+      carregar(d); estado.aberta = null;
+      fecharJanela(); filtros(); render(); window.scrollTo(0, 0);
+    })
+    .withFailureHandler(function (e) {
+      btn.disabled = false; btn.textContent = 'Excluir';
+      msg.textContent = (e && e.message) || 'Erro ao excluir.';
+    })
+    .apagarReceita(id);
+}
 
 function inserirNoPasso(txt) {
   var ta = estado.form.ultimoPasso;
@@ -951,8 +1079,8 @@ function salvar(btn) {
   google.script.run
     .withSuccessHandler(function (res) {
       carregar(res.dados);
-      estado.form = null; estado.aberta = res.id;
-      filtros(); render(); window.scrollTo(0, 0);
+      estado.aberta = res.id; estado.fator = 1; estado.alt = {};
+      fecharJanela(); filtros(); render(); window.scrollTo(0, 0);
     })
     .withFailureHandler(function (e) {
       btn.disabled = false; btn.textContent = 'Salvar';
