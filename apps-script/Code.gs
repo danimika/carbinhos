@@ -13,7 +13,7 @@ const SHEET_ID = '1GUX1zS-ZkvD4A6MVwc5X2D7mIFSyxNnvrMONBJgq9BQ';
 
 const ABAS = {
   receitas: { nome: 'Receitas', cab: ['id', 'nome', 'categoria', 'rendimento', 'tempo_min', 'link_insta', 'foto_url', 'tags', 'obs'] },
-  itens: { nome: 'Ingredientes_Receita', cab: ['receita_id', 'grupo', 'ordem', 'qtd', 'unidade', 'ingrediente', 'obs'] },
+  itens: { nome: 'Ingredientes_Receita', cab: ['receita_id', 'grupo', 'ordem', 'qtd', 'unidade', 'ingrediente', 'obs', 'a_gosto'] },
   preparo: { nome: 'Preparo', cab: ['receita_id', 'grupo', 'ordem', 'passo'] },
   unidades: { nome: 'Unidades', cab: ['codigo', 'nome', 'ml'] },
   tags: { nome: 'Tags', cab: ['de', 'para', 'tipo'] },
@@ -103,6 +103,9 @@ function validacoes_(ss) {
   lista_(it, coluna_(it, 'unidade'), codigos, false);
   // Ingrediente fora do catálogo só ganha um aviso (triângulo), não é bloqueado.
   lista_(it, coluna_(it, 'ingrediente'), nomesCat, true);
+  // Marcado: o ingrediente é "a gosto" e qtd/unidade viram só uma sugestão.
+  it.getRange(2, coluna_(it, 'a_gosto'), it.getMaxRows() - 1, 1)
+    .setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build());
 
   const pr = ss.getSheetByName(ABAS.preparo.nome);
   lista_(pr, coluna_(pr, 'receita_id'), ids, false);
@@ -114,15 +117,15 @@ function exemplo_(ss) {
     id, 'Bolo de caneca (exemplo)', 'Bolos', '1 caneca', 5, '', '', 'doce, sobremesa', 'Receita de exemplo — pode apagar.',
   ]]);
   const itens = [
-    [id, 'Secos', 1, 4, 'colher_sopa', 'farinha de amêndoas', ''],
-    [id, 'Secos', 2, 1, 'colher_sopa', 'cacau em pó', ''],
-    [id, 'Secos', 3, 1, 'colher_sopa', 'adoçante', 'ou a gosto'],
-    [id, 'Secos', 4, 1, 'colher_cha', 'fermento em pó', ''],
-    [id, 'Úmidos', 1, 1, 'un', 'ovo', ''],
-    [id, 'Úmidos', 2, 1, 'colher_sopa', 'manteiga', 'derretida'],
-    [id, 'Úmidos', 3, 2, 'colher_sopa', 'creme de leite', ''],
+    [id, 'Secos', 1, 4, 'colher_sopa', 'farinha de amêndoas', '', false],
+    [id, 'Secos', 2, 1, 'colher_sopa', 'cacau em pó', '', false],
+    [id, 'Secos', 3, 1, 'colher_sopa', 'adoçante', '', true],
+    [id, 'Secos', 4, 1, 'colher_cha', 'fermento em pó', '', false],
+    [id, 'Úmidos', 1, 1, 'un', 'ovo', '', false],
+    [id, 'Úmidos', 2, 1, 'colher_sopa', 'manteiga', 'derretida', false],
+    [id, 'Úmidos', 3, 2, 'colher_sopa', 'creme de leite', '', false],
   ];
-  ss.getSheetByName(ABAS.itens.nome).getRange(2, 1, itens.length, 7).setValues(itens);
+  ss.getSheetByName(ABAS.itens.nome).getRange(2, 1, itens.length, 8).setValues(itens);
   const passos = [
     [id, '', 1, 'Misture os secos na caneca.'],
     [id, '', 2, 'Junte os úmidos e mexa até ficar homogêneo.'],
@@ -139,7 +142,8 @@ function ler_(ss, nome) {
   const v = sh.getDataRange().getValues();
   const cab = v.shift().map(function (c) { return String(c).trim(); });
   return v
-    .filter(function (l) { return l.some(function (c) { return c !== ''; }); })
+    // Checkbox desmarcado (false) conta como vazio, senão toda linha com caixinha vira "preenchida".
+    .filter(function (l) { return l.some(function (c) { return c !== '' && c !== false; }); })
     .map(function (l) {
       const o = {};
       cab.forEach(function (c, i) {
@@ -200,7 +204,8 @@ function getData() {
     });
 
   agrupar_(ler_(ss, ABAS.itens.nome), porId, 'grupos', function (l) {
-    return { ordem: l.ordem, qtd: l.qtd, unidade: txt_(l.unidade), ingrediente: txt_(l.ingrediente), obs: txt_(l.obs) };
+    return { ordem: l.ordem, qtd: l.qtd, unidade: txt_(l.unidade), ingrediente: txt_(l.ingrediente), obs: txt_(l.obs),
+      aGosto: l.a_gosto === true || /^(sim|s|x|true|verdadeiro)$/i.test(txt_(l.a_gosto)) };
   });
   agrupar_(ler_(ss, ABAS.preparo.nome), porId, 'passos', function (l) {
     return { ordem: l.ordem, passo: txt_(l.passo) };

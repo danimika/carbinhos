@@ -234,6 +234,10 @@ function item(it) {
     qt = fmt(c.q) + (n ? ' ' + esc(n) : '');
   }
   var ing = esc(it.ingrediente);
+  if (it.aGosto) {
+    return '<li>' + ing + ' <span class="q">a gosto</span>' +
+      (qt ? ' <span class="obs">(sugestão: ' + qt + ')</span>' : '') + obsHtml(it) + '</li>';
+  }
   if (it.unidade === 'a_gosto' && q == null) return '<li>' + ing + ' <span class="q">a gosto</span>' + obsHtml(it) + '</li>';
   return '<li><span class="q">' + qt + '</span> ' + ing + obsHtml(it) + '</li>';
 }
@@ -275,11 +279,9 @@ function detalhe(r) {
     h += '<p><a href="' + esc(r.insta) + '" target="_blank" rel="noopener">Ver vídeo ↗</a></p>';
   }
 
-  h += convBox();
   app().innerHTML = h;
   document.getElementById('modo').onchange = function () { estado.modo = this.value; render(); };
   document.getElementById('fator').onchange = function () { estado.fator = +this.value; render(); };
-  bindConv();
 }
 
 /* ---------- conversor avulso ---------- */
