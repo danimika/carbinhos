@@ -303,7 +303,26 @@ function getData() {
     unidades: unidades,
     conversoes: conversoes,
     ingredientes: Object.keys(nomesIng).sort(),
+    podeEditar: ehDona_(),
   };
+}
+
+/**
+ * Quem pode alterar: só a dona do script. Não guardamos e-mail no código (o repositório é público):
+ * o app roda "como eu", então getEffectiveUser é a dona; getActiveUser é quem está usando
+ * (para outras contas o Google devolve vazio ou o e-mail delas, nunca o da dona).
+ */
+function ehDona_() {
+  try {
+    const ativo = Session.getActiveUser().getEmail();
+    return !!ativo && ativo === Session.getEffectiveUser().getEmail();
+  } catch (e) {
+    return false;
+  }
+}
+
+function exigirDona_() {
+  if (!ehDona_()) throw new Error('Só a dona do caderninho pode alterar as receitas.');
 }
 
 function sim_(v) {
@@ -382,6 +401,7 @@ function apagarLinhas_(sh, colNome, id) {
  * das 3 abas são trocadas pelas novas. Tags novas entram na aba Tags.
  */
 function salvarReceita(r) {
+  exigirDona_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -473,6 +493,7 @@ function resolverUnidade_(ss, unidades, valor) {
 
 /** Apaga a receita das abas Receitas, Ingredientes_Receita e Preparo. */
 function apagarReceita(id) {
+  exigirDona_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -491,6 +512,7 @@ function apagarReceita(id) {
 
 /** Liga/desliga a estrela de favorita. */
 function marcarFavorita(id, valor) {
+  exigirDona_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -512,6 +534,7 @@ function marcarFavorita(id, valor) {
 
 /** Ex.: { ingrediente: 'manteiga', qtd: 1, unidade: 'cs', qtd_equiv: 13, unidade_equiv: 'g' } */
 function salvarConversao(c) {
+  exigirDona_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -536,6 +559,7 @@ function salvarConversao(c) {
 
 /** Apaga a primeira linha da aba Conversoes igual à conversão recebida. */
 function apagarConversao(c) {
+  exigirDona_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
