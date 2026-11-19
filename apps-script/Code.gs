@@ -226,10 +226,146 @@ function getData() {
     .filter(function (u) { return txt_(u.codigo); })
     .map(function (u) { return { codigo: txt_(u.codigo), nome: txt_(u.nome), ml: Number(u.ml) || 0 }; });
 
+  // Sugestões para o campo "ingrediente" do formulário: catálogo + já usados.
+  const nomesIng = {};
+  ler_(ss, ABAS.catalogo.nome).forEach(function (c) { if (txt_(c.Name)) nomesIng[txt_(c.Name)] = 1; });
+  receitas.forEach(function (r) {
+    r.grupos.forEach(function (g) {
+      g.itens.forEach(function (it) { if (it.ingrediente) nomesIng[it.ingrediente] = 1; });
+    });
+  });
+
   return {
     receitas: receitas,
     tags: tags,
     tagsDesconhecidas: Object.keys(desconhecidas),
     unidades: unidades,
+    ingredientes: Object.keys(nomesIng).sort(),
   };
+}
+
+/* ---------- cadastro e edição (chamado pelo formulário) ---------- */
+
+function slug_(s) {
+  return txt_(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/** "0,5" vira número; frações tipo "1/2" ficam como texto (a tela entende as duas). */
+function qtd_(v) {
+  const s = txt_(v);
+  if (/^\d+([.,]\d+)?$/.test(s)) return Number(s.replace(',', '.'));
+  return s;
+}
+
+function cabecalho_(sh) {
+  return sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function (c) { return String(c).trim(); });
+}
+
+/** Última linha com algo na coluna A (getLastRow conta as caixinhas vazias). */
+function ultimaLinha_(sh) {
+  const n = sh.getLastRow();
+  if (n < 2) return 1;
+  const v = sh.getRange(1, 1, n, 1).getValues();
+  for (let i = n - 1; i >= 0; i--) if (txt_(v[i][0])) return i + 1;
+  return 1;
+}
+
+/** Escreve objetos {cabecalho: valor} logo depois da última linha preenchida. */
+function anexar_(sh, objs) {
+  if (!objs.length) return;
+  const cab = cabecalho_(sh);
+  const linhas = objs.map(function (o) {
+    return cab.map(function (c) { return o[c] === undefined ? '' : o[c]; });
+  });
+  const ini = ultimaLinha_(sh) + 1;
+  const falta = ini + linhas.length - 1 - sh.getMaxRows();
+  if (falta > 0) sh.insertRowsAfter(sh.getMaxRows(), falta);
+  sh.getRange(ini, 1, linhas.length, cab.length).setValues(linhas);
+}
+
+function apagarLinhas_(sh, colNome, id) {
+  const n = ultimaLinha_(sh);
+  if (n < 2) return;
+  const col = cabecalho_(sh).indexOf(colNome) + 1;
+  const v = sh.getRange(2, col, n - 1, 1).getValues();
+  // Apaga de baixo para cima, em blocos de linhas seguidas (cada chamada é lenta).
+  let i = v.length - 1;
+  while (i >= 0) {
+    if (txt_(v[i][0]) !== id) { i--; continue; }
+    let fim = i;
+    while (i - 1 >= 0 && txt_(v[i - 1][0]) === id) i--;
+    sh.deleteRows(i + 2, fim - i + 1);
+    i--;
+  }
+}
+
+/**
+ * Cria ou atualiza uma receita. Na edição (r.idOriginal), as linhas antigas
+ * das 3 abas são trocadas pelas novas. Tags novas entram na aba Tags.
+ */
+function salvarReceita(r) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const ss = ss_();
+    const nome = txt_(r.nome);
+    if (!nome) throw new Error('A receita precisa de um nome.');
+    const id = slug_(r.id || nome);
+    if (!id) throw new Error('Não consegui gerar um identificador para a receita.');
+    const original = txt_(r.idOriginal);
+
+    const ids = ler_(ss, ABAS.receitas.nome).map(function (x) { return txt_(x.id); });
+    if (id !== original && ids.indexOf(id) > -1) {
+      throw new Error('Já existe uma receita com o identificador "' + id + '".');
+    }
+
+    const shR = ss.getSheetByName(ABAS.receitas.nome);
+    const shI = ss.getSheetByName(ABAS.itens.nome);
+    const shP = ss.getSheetByName(ABAS.preparo.nome);
+    if (original) {
+      apagarLinhas_(shR, 'id', original);
+      apagarLinhas_(shI, 'receita_id', original);
+      apagarLinhas_(shP, 'receita_id', original);
+    }
+
+    const tags = (r.tags || []).map(txt_).filter(String);
+    anexar_(shR, [{
+      id: id, nome: nome, categoria: txt_(r.categoria), rendimento: txt_(r.rendimento),
+      tempo_min: qtd_(r.tempo), link_insta: txt_(r.insta), foto_url: txt_(r.foto),
+      tags: tags.join(', '), obs: txt_(r.obs),
+    }]);
+
+    const itens = [];
+    (r.grupos || []).forEach(function (g) {
+      let ordem = 0;
+      (g.itens || []).forEach(function (it) {
+        if (!txt_(it.ingrediente)) return;
+        itens.push({
+          receita_id: id, grupo: txt_(g.nome), ordem: ++ordem, qtd: qtd_(it.qtd), unidade: txt_(it.unidade),
+          ingrediente: txt_(it.ingrediente), obs: txt_(it.obs), a_gosto: !!it.aGosto,
+        });
+      });
+    });
+    anexar_(shI, itens);
+
+    const passos = [];
+    (r.passos || []).forEach(function (g) {
+      let ordem = 0;
+      (g.itens || []).forEach(function (p) {
+        if (!txt_(p.passo)) return;
+        passos.push({ receita_id: id, grupo: txt_(g.nome), ordem: ++ordem, passo: txt_(p.passo) });
+      });
+    });
+    anexar_(shP, passos);
+
+    const oficiais = ler_(ss, ABAS.tags.nome).map(function (t) { return txt_(t.de).toLowerCase(); });
+    const novas = tags.filter(function (t) { return oficiais.indexOf(t.toLowerCase()) < 0; });
+    anexar_(ss.getSheetByName(ABAS.tags.nome), novas.map(function (t) { return { de: t }; }));
+
+    SpreadsheetApp.flush();
+    return { id: id, dados: getData() };
+  } finally {
+    lock.releaseLock();
+  }
 }
