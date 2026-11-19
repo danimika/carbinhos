@@ -84,11 +84,28 @@ a{color:var(--acc)}
 .cb-op{padding:6px 10px;cursor:pointer;font-size:14px}
 .cb-op.on,.cb-op:hover{background:var(--acc2)}
 .cb-vazio{padding:6px 10px;color:var(--mute);font-size:13px}
+/* favoritas e conversões */
+.botoes{display:flex;gap:8px;align-items:center}
+.card{position:relative}
+.estrela{position:absolute;top:8px;right:8px;border:0;border-radius:999px;width:34px;height:34px;font-size:18px;cursor:pointer;background:rgba(0,0,0,.35);color:#fff;line-height:1}
+.estrela.on{color:#ffc93c}
+.btn.fav.on{background:#ffc93c;border-color:#ffc93c;color:#2b2420}
+.qbtn{font:inherit;font-weight:600;color:inherit;background:none;border:0;border-bottom:1px dashed var(--acc);padding:0;cursor:pointer}
+.qbtn.trocado{color:var(--acc)}
+.dica{font-size:12px;color:var(--mute);margin:-4px 0 10px}
+.convs{list-style:none;padding:0;margin:0}
+.convs li{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0}
+.nova-conv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--card);border:1px dashed var(--acc);border-radius:12px;padding:10px 12px;margin:12px 0}
+.nova-conv .cq{width:70px}
+.nova-conv .cu{width:170px}
+.nova-conv .ci{flex:1 1 200px}
 </style>
 </head>
 <body>
 <header><div class="topo">
-  <div class="topo-linha"><h1>🥣 Carbinhos</h1><button class="btn" data-novo>+ Nova receita</button></div>
+  <div class="topo-linha"><h1>🥣 Carbinhos</h1><div class="botoes">
+    <button class="btn sec" data-tela="conv" title="Cadastrar conversões de medidas">⚖️ Conversões</button>
+    <button class="btn" data-novo>+ Nova receita</button></div></div>
   <input id="busca" type="search" placeholder="Buscar por nome, ingrediente ou tag…" autocomplete="off">
   <div id="filtros"></div>
 </div></header>
@@ -96,8 +113,9 @@ a{color:var(--acc)}
 
 <script>
 var D = null;
-var ML = {}, NOMES = {}, ABREV = {};
-var estado = { busca: '', tags: [], cat: '', aberta: null, modo: 'original', fator: 1, form: null };
+var ML = {}, GR = {}, NOMES = {}, ABREV = {};
+// tela: 'lista' ou 'conv'; alt: medida escolhida por ingrediente (clicando na quantidade)
+var estado = { busca: '', tags: [], cat: '', fav: false, aberta: null, modo: 'original', fator: 1, form: null, tela: 'lista', alt: {} };
 var FR = [[0, ''], [1/8, '⅛'], [1/4, '¼'], [1/3, '⅓'], [1/2, '½'], [2/3, '⅔'], [3/4, '¾'], [1, '']];
 
 function app() { return document.getElementById('app'); }
@@ -118,10 +136,12 @@ if (window.google && google.script) {
 }
 
 function carregar(d) {
-  D = d; ML = {}; NOMES = {}; ABREV = {};
+  D = d; ML = {}; GR = {}; NOMES = {}; ABREV = {};
+  d.conversoes = d.conversoes || [];
   d.unidades.forEach(function (u) {
     NOMES[u.codigo] = u.nome;
     if (u.ml) ML[u.codigo] = u.ml;
+    if (u.gramas) GR[u.codigo] = u.gramas;
     if (u.abrev) ABREV[u.codigo] = u.abrev;
   });
 }
@@ -166,11 +186,78 @@ function nomeU(u, q) {
   if (/^colher/.test(n)) return n.replace(/^colher/, 'colheres');
   return n.replace(/^(\S+)/, '$1s');
 }
-function converter(q, u) {
+/* Conversão entre volume (ml), peso (gramas) e contagem (unid., fatia...).
+   Dentro do mesmo tipo é direto; entre tipos usa a aba Conversoes do ingrediente
+   (ex.: manteiga 1 cs = 13 g), ou as conversões sem ingrediente, que valem para todos. */
+function dimensao(u) {
+  if (ML[u]) return ['vol', ML[u]];
+  if (GR[u]) return ['peso', GR[u]];
+  return ['u:' + u, 1];
+}
+/** A conversão de "ovo" vale para "ovos" e para "manteiga" vale "manteiga sem sal". */
+function chaveIng(s) {
+  return norm(s).split(/\s+/).map(function (w) { return w.length > 3 ? w.replace(/s$/, '') : w; }).join(' ');
+}
+function casaIng(convIng, ing) {
+  var ci = chaveIng(convIng), k = chaveIng(ing);
+  return !ci || ci === k || (' ' + k + ' ').indexOf(' ' + ci + ' ') > -1;
+}
+function conversoesDe(ing) {
+  var l = [];
+  D.conversoes.forEach(function (c) {
+    if (!casaIng(c.ingrediente, ing)) return;
+    var a = dimensao(c.unidade), b = dimensao(c.unidade_equiv);
+    if (a[0] === b[0]) return;
+    var r = (c.qtd_equiv * b[1]) / (c.qtd * a[1]);   // 1 base de a = r bases de b
+    l.push([a[0], b[0], r], [b[0], a[0], 1 / r]);
+  });
+  return l;
+}
+function paraUnidade(q, u, alvo, ing) {
+  if (u === alvo) return q;
+  var a = dimensao(u), b = dimensao(alvo), base = q * a[1];
+  if (a[0] === b[0]) return base / b[1];
+  var arestas = conversoesDe(ing), visto = {}, fila = [[a[0], base]];
+  visto[a[0]] = 1;
+  while (fila.length) {
+    var at = fila.shift();
+    if (at[0] === b[0]) return at[1] / b[1];
+    arestas.forEach(function (e) {
+      if (e[0] === at[0] && !visto[e[1]]) { visto[e[1]] = 1; fila.push([e[1], at[1] * e[2]]); }
+    });
+  }
+  return null;
+}
+/** Medidas em que este ingrediente pode aparecer (a original primeiro). */
+function medidasPossiveis(it) {
+  var q = qtdNum(it.qtd);
+  if (q == null || !it.unidade) return [];
+  var cands = [it.unidade, 'g', 'xicara', 'colher_sopa', 'colher_cha', 'ml', 'un'];
+  // unidades das conversões específicas deste ingrediente (as genéricas não viram opção)
+  D.conversoes.forEach(function (c) {
+    if (c.ingrediente && casaIng(c.ingrediente, it.ingrediente)) cands.push(c.unidade, c.unidade_equiv);
+  });
+  var vistos = {};
+  return cands.filter(function (u) {
+    if (!u || vistos[u] || !NOMES[u]) return false;
+    vistos[u] = 1;
+    return paraUnidade(q, it.unidade, u, it.ingrediente) != null;
+  });
+}
+function converter(q, u, ing) {
   var m = estado.modo;
-  if (m === 'original' || !ML[u]) return { q: q, u: u };
+  var alt = ing != null && estado.alt[norm(ing)];
+  if (alt) {
+    var r0 = paraUnidade(q, u, alt, ing);
+    if (r0 != null) return { q: r0, u: alt };
+  }
+  if (m === 'original') return { q: q, u: u };
+  if (m !== 'auto') {
+    var r = paraUnidade(q, u, m, ing);
+    return r == null ? { q: q, u: u } : { q: r, u: m };
+  }
+  if (!ML[u]) return { q: q, u: u };
   var ml = q * ML[u];
-  if (m !== 'auto') return { q: ml / ML[m], u: m };
   var ordem = ['xicara', 'colher_sopa', 'colher_cha'];
   for (var i = 0; i < ordem.length; i++) {
     var k = ordem[i];
@@ -180,6 +267,8 @@ function converter(q, u) {
   }
   return { q: q, u: u };
 }
+/** Peso a partir de 10 g sai inteiro (153 g, não 152,8 g). */
+function fmtU(q, u) { return GR[u] && q >= 10 ? String(Math.round(q)) : fmt(q); }
 
 /* ---------- filtros ---------- */
 function filtros() {
@@ -198,50 +287,94 @@ function filtros() {
   D.receitas.forEach(function (r) { if (r.categoria) cats[r.categoria] = 1; });
 
   var h = '';
+  if (D.receitas.some(function (r) { return r.favorita; })) {
+    h += '<div class="linha"><span class="rot"></span><button class="chip' + (estado.fav ? ' on' : '') + '" data-filtrofav>★ Favoritas</button></div>';
+  }
   var cl = Object.keys(cats).sort();
   if (cl.length > 1) h += linha('Categoria', cl.map(function (c) { return chip(c, 'cat', estado.cat === c); }));
   Object.keys(grupos).sort().forEach(function (tp) {
     h += linha(tp, grupos[tp].sort().map(function (t) { return chip(t, 'tag', estado.tags.indexOf(norm(t)) > -1); }));
   });
   el.innerHTML = h;
-  el.style.display = (estado.aberta || estado.form) ? 'none' : '';
+  el.style.display = (estado.aberta || estado.form || estado.tela !== 'lista') ? 'none' : '';
 }
 function linha(rot, chips) { return '<div class="linha"><span class="rot">' + esc(rot) + '</span>' + chips.join('') + '</div>'; }
 function chip(t, tipo, on) { return '<button class="chip' + (on ? ' on' : '') + '" data-' + tipo + '="' + esc(t) + '">' + esc(t) + '</button>'; }
 
 document.addEventListener('click', function (e) {
-  var b = e.target.closest('[data-tag],[data-cat],[data-abrir],[data-voltar],[data-novo],[data-editar]');
-  if (!b) return;
-  if (b.hasAttribute('data-novo')) return abrirForm(null);
+  var b = e.target.closest('[data-fav],[data-alt],[data-tela],[data-filtrofav],[data-tag],[data-cat],[data-abrir],[data-voltar],[data-novo],[data-editar]');
+  if (!b || !D) return;
+  if (b.hasAttribute('data-novo')) { estado.tela = 'lista'; return abrirForm(null); }
   if (b.hasAttribute('data-editar')) return abrirForm(receita(b.dataset.editar));
+  if (b.hasAttribute('data-tela')) {
+    estado.form = null; estado.aberta = null; estado.tela = b.dataset.tela;
+    filtros(); render(); window.scrollTo(0, 0); return;
+  }
   if (estado.form) return;
-  if (b.hasAttribute('data-tag')) {
+  if (b.hasAttribute('data-fav')) return favoritar(b.dataset.fav);
+  if (b.hasAttribute('data-alt')) return trocarMedida(b.dataset.alt);
+  if (b.hasAttribute('data-filtrofav')) {
+    estado.fav = !estado.fav;
+  } else if (b.hasAttribute('data-tag')) {
     var k = norm(b.dataset.tag), i = estado.tags.indexOf(k);
     if (i > -1) estado.tags.splice(i, 1); else estado.tags.push(k);
   } else if (b.hasAttribute('data-cat')) {
     estado.cat = estado.cat === b.dataset.cat ? '' : b.dataset.cat;
   } else if (b.hasAttribute('data-abrir')) {
-    estado.aberta = b.dataset.abrir; estado.fator = 1; window.scrollTo(0, 0);
+    estado.aberta = b.dataset.abrir; estado.fator = 1; estado.alt = {}; window.scrollTo(0, 0);
   } else {
-    estado.aberta = null;
+    estado.aberta = null; estado.tela = 'lista';
   }
   filtros(); render();
 });
 document.getElementById('busca').addEventListener('input', function (e) {
   estado.busca = norm(e.target.value);
-  estado.aberta = null;
+  if (estado.form) return;
+  estado.aberta = null; estado.tela = 'lista';
   filtros(); render();
 });
+
+/* ---------- favoritas ---------- */
+function favoritar(id) {
+  var r = receita(id);
+  if (!r) return;
+  r.favorita = !r.favorita;   // muda na hora; desfaz se a planilha der erro
+  filtros(); render();
+  google.script.run
+    .withFailureHandler(function (e) {
+      r.favorita = !r.favorita; filtros(); render();
+      alert('Não consegui salvar a favorita: ' + ((e && e.message) || 'erro'));
+    })
+    .marcarFavorita(id, r.favorita);
+}
+
+/* ---------- clicar na quantidade troca a medida daquele ingrediente ---------- */
+function trocarMedida(chave) {
+  var r = receita(estado.aberta), it = null;
+  if (!r) return;
+  ingredientesDe(r).forEach(function (x) { if (norm(x.ingrediente) === chave) it = x; });
+  if (!it) return;
+  var ms = medidasPossiveis(it);
+  var atual = converter(qtdNum(it.qtd) * estado.fator, it.unidade, it.ingrediente).u;
+  var prox = ms[(ms.indexOf(atual) + 1) % ms.length];
+  if (prox === it.unidade && estado.modo === 'original') delete estado.alt[chave];
+  else estado.alt[chave] = prox;
+  render();
+}
 
 /* ---------- telas ---------- */
 function render() {
   if (!D || estado.form) return;
+  if (estado.tela === 'conv') return telaConversoes();
   if (estado.aberta) {
     var r = receita(estado.aberta);
     if (r) return detalhe(r);
     estado.aberta = null;
   }
-  var rs = D.receitas.filter(passa);
+  // favoritas primeiro, o resto na ordem da planilha
+  var rs = D.receitas.filter(passa).map(function (r, i) { return [r, i]; })
+    .sort(function (a, b) { return (b[0].favorita - a[0].favorita) || (a[1] - b[1]); })
+    .map(function (x) { return x[0]; });
   var h = rs.length ? '<div class="grade">' + rs.map(card).join('') + '</div>'
                     : '<div class="vazio">Nenhuma receita encontrada.</div>';
   h += convBox();
@@ -253,6 +386,7 @@ function render() {
 }
 
 function passa(r) {
+  if (estado.fav && !r.favorita) return false;
   if (estado.cat && r.categoria !== estado.cat) return false;
   var rt = r.tags.map(norm);
   for (var i = 0; i < estado.tags.length; i++) if (rt.indexOf(estado.tags[i]) < 0) return false;
@@ -280,6 +414,8 @@ function card(r) {
   var f = foto(r.foto);
   var meta = [r.categoria, r.tempo ? r.tempo + ' min' : ''].filter(Boolean).join(' · ');
   return '<div class="card" data-abrir="' + esc(r.id) + '">' +
+    '<button class="estrela' + (r.favorita ? ' on' : '') + '" data-fav="' + esc(r.id) + '" title="' +
+      (r.favorita ? 'Tirar das favoritas' : 'Favoritar') + '">' + (r.favorita ? '★' : '☆') + '</button>' +
     '<div class="img"' + (f ? ' style="background-image:url(&quot;' + esc(f) + '&quot;)"' : '') + '>' + (f ? '' : '🍰') + '</div>' +
     '<div class="txt"><b>' + esc(r.nome || r.id) + '</b><div class="meta">' + esc(meta) + '</div>' + tagsHtml(r) + '</div></div>';
 }
@@ -291,9 +427,14 @@ function item(it) {
     var nu = nomeU(it.unidade, 1);
     if (nu) qt += (qt ? ' ' : '') + esc(nu);
   } else {
-    var c = converter(q * estado.fator, it.unidade);
-    var n = nomeU(c.u, c.q);
-    qt = fmt(c.q) + (n ? ' ' + esc(n) : '');
+    var c = converter(q * estado.fator, it.unidade, it.ingrediente);
+    var n = c.u === 'un' && c.u !== it.unidade ? 'unid.' : nomeU(c.u, c.q);
+    qt = fmtU(c.q, c.u) + (n ? ' ' + esc(n) : '');
+    // quando dá para ver em outra medida, a quantidade vira um botão que troca
+    if (medidasPossiveis(it).length > 1) {
+      qt = '<button class="qbtn' + (c.u !== it.unidade ? ' trocado' : '') + '" data-alt="' + esc(norm(it.ingrediente)) +
+        '" title="Clique para ver em outra medida">' + qt + '</button>';
+    }
   }
   var ing = esc(it.ingrediente);
   if (it.aGosto || it.unidade === 'a_gosto') {
@@ -327,8 +468,8 @@ function abrevU(u, q) {
 function qtdCurta(it) {
   var q = qtdNum(it.qtd), t = '';
   if (q != null) {
-    var c = converter(q * estado.fator, it.unidade), a = abrevU(c.u, c.q);
-    t = fmt(c.q) + (a ? ' ' + a : '');
+    var c = converter(q * estado.fator, it.unidade, it.ingrediente), a = abrevU(c.u, c.q);
+    t = fmtU(c.q, c.u) + (a ? ' ' + a : '');
   } else if (it.qtd) {
     t = String(it.qtd);
   }
@@ -352,17 +493,22 @@ function opt(v, rot, sel) { return '<option value="' + esc(v) + '"' + (sel ? ' s
 
 function detalhe(r) {
   var meta = [r.categoria, r.rendimento, r.tempo ? r.tempo + ' min' : ''].filter(Boolean).join(' · ');
-  var h = '<div class="cab-det"><button class="voltar" data-voltar>← Voltar</button>' +
-    '<button class="btn sec" data-editar="' + esc(r.id) + '">✏️ Editar</button></div>' +
+  var h = '<div class="cab-det"><button class="voltar" data-voltar>← Voltar</button><div class="botoes">' +
+    '<button class="btn sec fav' + (r.favorita ? ' on' : '') + '" data-fav="' + esc(r.id) + '">' +
+      (r.favorita ? '★ Favorita' : '☆ Favoritar') + '</button>' +
+    '<button class="btn sec" data-editar="' + esc(r.id) + '">✏️ Editar</button></div></div>' +
     '<h2>' + esc(r.nome || r.id) + '</h2><div class="meta">' + esc(meta) + '</div><div>' + tagsHtml(r) + '</div>';
 
   var modos = [['original', 'como na receita'], ['auto', 'mais prático']]
     .concat(['xicara', 'colher_sopa', 'colher_cha', 'ml'].filter(function (k) { return ML[k]; })
-      .map(function (k) { return [k, 'tudo em ' + nomeU(k, 2)]; }));
+      .map(function (k) { return [k, 'tudo em ' + nomeU(k, 2)]; }))
+    .concat(GR.g ? [['g', 'tudo em gramas (peso)']] : []);
   h += '<div class="barra">' +
     '<label>Medidas: <select id="modo">' + modos.map(function (m) { return opt(m[0], m[1], estado.modo === m[0]); }).join('') + '</select></label>' +
     '<label>Quantidade: <select id="fator">' + [0.5, 1, 1.5, 2, 3].map(function (f) { return opt(f, '× ' + fmt(f), estado.fator === f); }).join('') + '</select></label>' +
-    '</div>';
+    '</div>' +
+    '<p class="dica">Quantidade sublinhada: clique para ver em outra medida (peso, volume, unidades). ' +
+    'Conversões como “1 cs de manteiga = 13 g” ficam em ⚖️ Conversões.</p>';
 
   if (r.grupos.length) {
     h += '<div class="grupos">' + r.grupos.map(function (g) {
@@ -387,7 +533,7 @@ function detalhe(r) {
   }
 
   app().innerHTML = h;
-  document.getElementById('modo').onchange = function () { estado.modo = this.value; render(); };
+  document.getElementById('modo').onchange = function () { estado.modo = this.value; estado.alt = {}; render(); };
   document.getElementById('fator').onchange = function () { estado.fator = +this.value; render(); };
 }
 
@@ -412,6 +558,71 @@ function bindConv() {
   }
   q.oninput = de.onchange = para.onchange = calc;
   calc();
+}
+
+/* ---------- tela de conversões ---------- */
+function textoConv(c) {
+  return fmtU(c.qtd, c.unidade) + ' ' + nomeU(c.unidade, c.qtd) + ' = ' + fmtU(c.qtd_equiv, c.unidade_equiv) + ' ' + nomeU(c.unidade_equiv, c.qtd_equiv);
+}
+/** Ex.: com 1 cs = 13 g, mostra "1 xícara ≈ 208 g" para ajudar a conferir. */
+function exemploConv(c) {
+  var a = dimensao(c.unidade)[0], b = dimensao(c.unidade_equiv)[0], ing = c.ingrediente;
+  var ex = null;
+  if ((a === 'vol' && b === 'peso') || (a === 'peso' && b === 'vol')) {
+    var g = paraUnidade(1, 'xicara', 'g', ing || '');
+    if (g != null && ML.xicara) ex = '1 xícara ≈ ' + fmtU(g, 'g') + ' g';
+  }
+  return ex;
+}
+function telaConversoes() {
+  var cs = D.conversoes.slice().sort(function (a, b) { return norm(a.ingrediente).localeCompare(norm(b.ingrediente)); });
+  var h = '<div class="cab-det"><button class="voltar" data-voltar>← Voltar</button></div>' +
+    '<h2>⚖️ Conversões</h2>' +
+    '<p class="obs">Diga quanto uma medida vale em outra, por ingrediente. Ex.: manteiga, 1 colher de sopa = 13 g; ' +
+    'ovo, 1 unidade = 50 g. Com isso, na receita dá para ver o ingrediente em peso, volume ou unidades. ' +
+    'Sem ingrediente, a conversão vale para todos.</p>' +
+    '<div class="nova-conv"><div class="ci" id="c-ing"></div>' +
+    '<input class="cq" id="c-q1" placeholder="qtd" inputmode="decimal" value="1"><div class="cu" id="c-u1"></div> =' +
+    '<input class="cq" id="c-q2" placeholder="qtd" inputmode="decimal"><div class="cu" id="c-u2"></div>' +
+    '<button class="btn" id="c-add">Adicionar</button><span id="c-msg" class="erro"></span></div>';
+  if (!cs.length) h += '<div class="vazio">Nenhuma conversão ainda.</div>';
+  else {
+    h += '<ul class="convs">' + cs.map(function (c, i) {
+      var ex = exemploConv(c);
+      return '<li><span><b>' + esc(c.ingrediente || 'qualquer ingrediente') + '</b> · ' + esc(textoConv(c)) +
+        (ex ? ' <span class="obs">(' + esc(ex) + ')</span>' : '') + '</span>' +
+        '<button class="mini" data-apagarconv="' + D.conversoes.indexOf(c) + '" title="Apagar">🗑</button></li>';
+    }).join('') + '</ul>';
+  }
+  app().innerHTML = h;
+  var uops = opcoesUnidade();
+  new Combo(document.getElementById('c-ing'), { opcoes: opcoes(D.ingredientes || []), valor: '', criar: true, dica: 'ingrediente (vazio = todos)' });
+  new Combo(document.getElementById('c-u1'), { opcoes: uops, valor: 'colher_sopa', criar: true, dica: 'unidade' });
+  new Combo(document.getElementById('c-u2'), { opcoes: uops, valor: 'g', criar: true, dica: 'unidade' });
+  document.getElementById('c-add').onclick = function () {
+    var btn = this, msg = document.getElementById('c-msg');
+    var c = {
+      ingrediente: combo('c-ing').get(), qtd: document.getElementById('c-q1').value.trim(), unidade: combo('c-u1').get(),
+      qtd_equiv: document.getElementById('c-q2').value.trim(), unidade_equiv: combo('c-u2').get(),
+    };
+    if (!c.qtd || !c.qtd_equiv) { msg.textContent = 'Preencha as duas quantidades.'; return; }
+    btn.disabled = true; btn.textContent = 'Salvando…'; msg.textContent = '';
+    google.script.run
+      .withSuccessHandler(function (d) { carregar(d); render(); })
+      .withFailureHandler(function (e) { btn.disabled = false; btn.textContent = 'Adicionar'; msg.textContent = (e && e.message) || 'Erro ao salvar.'; })
+      .salvarConversao(c);
+  };
+  [].forEach.call(document.querySelectorAll('[data-apagarconv]'), function (b) {
+    b.onclick = function () {
+      var c = D.conversoes[+b.dataset.apagarconv];
+      if (!confirm('Apagar a conversão "' + (c.ingrediente || 'qualquer ingrediente') + ': ' + textoConv(c) + '"?')) return;
+      b.disabled = true;
+      google.script.run
+        .withSuccessHandler(function (d) { carregar(d); render(); })
+        .withFailureHandler(function (e) { b.disabled = false; alert((e && e.message) || 'Erro ao apagar.'); })
+        .apagarConversao(c);
+    };
+  });
 }
 
 /* ---------- combobox: select em que dá pra digitar ----------
