@@ -562,7 +562,8 @@ function bindConv() {
 
 /* ---------- tela de conversões ---------- */
 function textoConv(c) {
-  return fmtU(c.qtd, c.unidade) + ' ' + nomeU(c.unidade, c.qtd) + ' = ' + fmtU(c.qtd_equiv, c.unidade_equiv) + ' ' + nomeU(c.unidade_equiv, c.qtd_equiv);
+  function nome(u, q) { return u === 'un' ? (q > 1 ? 'unidades' : 'unidade') : nomeU(u, q); }
+  return fmtU(c.qtd, c.unidade) + ' ' + nome(c.unidade, c.qtd) + ' = ' + fmtU(c.qtd_equiv, c.unidade_equiv) + ' ' + nome(c.unidade_equiv, c.qtd_equiv);
 }
 /** Ex.: com 1 cs = 13 g, mostra "1 xícara ≈ 208 g" para ajudar a conferir. */
 function exemploConv(c) {
